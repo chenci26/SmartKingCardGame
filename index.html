@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧王題庫</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="main-title">智慧王題庫</h1>
+        <div class="categories" id="categories">
+            <!-- Categories will be dynamically inserted here -->
+        </div>
+    </div>
+
+    <!-- Modal for showing answers -->
+    <div class="modal" id="answerModal">
+        <div class="modal-content">
+            <h2>確認查看答案？</h2>
+            <div class="modal-buttons">
+                <button class="btn btn-confirm" id="confirmAnswer">確認</button>
+                <button class="btn btn-cancel" id="cancelAnswer">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
