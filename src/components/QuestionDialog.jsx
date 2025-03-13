@@ -188,7 +188,7 @@ export default function QuestionDialog({
           )}
           {showResult && (
             <Grow in={showResult}>
-              <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ textAlign: 'center', width: '80%', margin: '0 auto' }}>
                 <Typography 
                   variant="h3" 
                   sx={{ 
@@ -197,25 +197,25 @@ export default function QuestionDialog({
                     fontWeight: 'bold',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
-                    maxWidth: '90%',
-                    margin: '0 auto'
+                    width: '100%'
                   }}
                 >
                   正確答案：{question.correctAnswer.replace(/\\n/g, '\n')}
                 </Typography>
-                <Typography 
-                  variant="h4" 
-                  sx={{ 
-                    color: '#fff', 
-                    mt: 3,
-                    whiteSpace: 'pre-wrap',
-                    wordBreak: 'break-word',
-                    maxWidth: '90%',
-                    margin: '0 auto'
-                  }}
-                >
-                  {question.explanation.replace(/\\n/g, '\n')}
-                </Typography>
+                {question.explanation && (
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      color: '#fff', 
+                      mt: 3,
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                      width: '100%'
+                    }}
+                  >
+                    {question.explanation.replace(/\\n/g, '\n')}
+                  </Typography>
+                )}
               </Box>
             </Grow>
           )}
