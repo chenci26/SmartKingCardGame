@@ -23,14 +23,20 @@ const OptionButton = styled(Button)(({ theme, isCorrect }) => ({
   color: theme.palette.common.white,
   '&:hover': {
     backgroundColor: isCorrect ? '#45a049' : theme.palette.background.paper,
+    '& .option-text': {
+      transform: 'scale(1.5)',
+      textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+    }
   },
   transition: 'all 0.3s ease-in-out',
   fontSize: '2rem',
   fontWeight: 500,
-  cursor: 'default',
+  pointerEvents: 'auto !important',
+  cursor: 'pointer !important',
   '&.Mui-disabled': {
     color: 'white',
-    opacity: 1
+    opacity: 1,
+    backgroundColor: isCorrect ? '#4caf50' : theme.palette.background.paper,
   },
   padding: '25px',
   display: 'flex',
@@ -38,6 +44,12 @@ const OptionButton = styled(Button)(({ theme, isCorrect }) => ({
   justifyContent: 'center',
   textAlign: 'center',
   lineHeight: 1.2,
+  overflow: 'hidden',
+  '& .option-text': {
+    transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+    display: 'block',
+    width: '100%'
+  }
 }));
 
 export default function QuestionDialog({ 
@@ -153,10 +165,10 @@ export default function QuestionDialog({
                       <div style={{ width: '100%', height: '100%' }}>
                         <OptionButton
                           variant="contained"
-                          disabled
+                          disabled={showResult}
                           isCorrect={showResult && option === question.correctAnswer}
                         >
-                          {option}
+                          <span className="option-text">{option}</span>
                         </OptionButton>
                       </div>
                     </Fade>
@@ -187,17 +199,71 @@ export default function QuestionDialog({
             </Button>
           )}
           {showResult && (
-            <Grow in={showResult}>
-              <Box sx={{ textAlign: 'center', width: '80%', margin: '0 auto' }}>
+            <Grow in={showResult} timeout={800}>
+              <Box sx={{ 
+                textAlign: 'center', 
+                width: '80%', 
+                margin: '0 auto'
+              }}>
                 <Typography 
                   variant="h3" 
                   sx={{ 
-                    color: '#4caf50', 
+                    color: '#fff', 
                     mb: 3, 
                     fontWeight: 'bold',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
-                    width: '100%'
+                    width: '100%',
+                    animation: 'bounceInDown 1s ease-out',
+                    padding: '30px',
+                    borderRadius: '20px',
+                    background: 'linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.1) 100%)',
+                    border: '2px solid #4caf50',
+                    boxShadow: '0 0 20px rgba(76, 175, 80, 0.5)',
+                    '@keyframes bounceInDown': {
+                      '0%': {
+                        opacity: 0,
+                        transform: 'translateY(-500px)',
+                      },
+                      '60%': {
+                        opacity: 1,
+                        transform: 'translateY(30px)',
+                      },
+                      '80%': {
+                        transform: 'translateY(-10px)',
+                      },
+                      '100%': {
+                        transform: 'translateY(0)',
+                      }
+                    },
+                    '&::after': {
+                      content: '"✓"',
+                      position: 'absolute',
+                      top: '-15px',
+                      right: '-15px',
+                      width: '40px',
+                      height: '40px',
+                      borderRadius: '50%',
+                      backgroundColor: '#4caf50',
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.5rem',
+                      animation: 'popIn 0.5s ease-out 0.8s both'
+                    },
+                    '@keyframes popIn': {
+                      '0%': {
+                        transform: 'scale(0)',
+                      },
+                      '80%': {
+                        transform: 'scale(1.2)',
+                      },
+                      '100%': {
+                        transform: 'scale(1)',
+                      }
+                    },
+                    position: 'relative'
                   }}
                 >
                   正確答案：{question.correctAnswer.replace(/\\n/g, '\n')}
@@ -210,7 +276,23 @@ export default function QuestionDialog({
                       mt: 3,
                       whiteSpace: 'pre-wrap',
                       wordBreak: 'break-word',
-                      width: '100%'
+                      width: '100%',
+                      opacity: 0,
+                      animation: 'slideUp 0.5s ease-out 0.3s forwards',
+                      padding: '20px',
+                      borderRadius: '15px',
+                      backgroundColor: 'rgba(255,255,255,0.1)',
+                      border: '1px solid rgba(255,255,255,0.2)',
+                      '@keyframes slideUp': {
+                        '0%': {
+                          opacity: 0,
+                          transform: 'translateY(20px)'
+                        },
+                        '100%': {
+                          opacity: 1,
+                          transform: 'translateY(0)'
+                        }
+                      }
                     }}
                   >
                     {question.explanation.replace(/\\n/g, '\n')}
