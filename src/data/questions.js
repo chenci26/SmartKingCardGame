@@ -5,8 +5,7 @@ const questions = {
             points: 100,
             question: "世界上最長的河流是哪一條？",
             options: ["亞馬遜河", "長江", "尼羅河", "密西西比河"],
-            correctAnswer: "尼羅河",
-            explanation: "尼羅河\\n是世界上\\n最長的\\n河流",
+            correctAnswer: "\\n(A)尼羅河\\n(B)長江",
             timeLimit: 60
         },
         {
@@ -15,8 +14,7 @@ const questions = {
             question: "世界上面積最大的國家是哪一個？",
             options: ["加拿大", "俄羅斯", "美國", "中國"],
             correctAnswer: "俄羅斯",
-            explanation: "俄羅斯是世界上面積最大的國家",
-            // timeLimit: 30
+            explanation: "俄羅斯是世界上面積最大的國家"
         },
         {
             id: 3,
