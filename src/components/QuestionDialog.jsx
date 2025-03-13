@@ -189,11 +189,32 @@ export default function QuestionDialog({
           {showResult && (
             <Grow in={showResult}>
               <Box sx={{ textAlign: 'center' }}>
-                <Typography variant="h3" sx={{ color: '#4caf50', mb: 3, fontWeight: 'bold' }}>
-                  正確答案：{question.correctAnswer}
+                <Typography 
+                  variant="h3" 
+                  sx={{ 
+                    color: '#4caf50', 
+                    mb: 3, 
+                    fontWeight: 'bold',
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    maxWidth: '90%',
+                    margin: '0 auto'
+                  }}
+                >
+                  正確答案：{question.correctAnswer.replace(/\\n/g, '\n')}
                 </Typography>
-                <Typography variant="h4" sx={{ color: '#fff', mt: 3 }}>
-                  {question.explanation}
+                <Typography 
+                  variant="h4" 
+                  sx={{ 
+                    color: '#fff', 
+                    mt: 3,
+                    whiteSpace: 'pre-wrap',
+                    wordBreak: 'break-word',
+                    maxWidth: '90%',
+                    margin: '0 auto'
+                  }}
+                >
+                  {question.explanation.replace(/\\n/g, '\n')}
                 </Typography>
               </Box>
             </Grow>
