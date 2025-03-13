@@ -17,20 +17,27 @@ import { styled } from '@mui/material/styles';
 
 const OptionButton = styled(Button)(({ theme, isCorrect }) => ({
   width: '100%',
-  marginBottom: theme.spacing(1),
+  height: '100%',
+  marginBottom: theme.spacing(2),
   backgroundColor: isCorrect ? '#4caf50' : theme.palette.background.paper,
   color: theme.palette.common.white,
   '&:hover': {
     backgroundColor: isCorrect ? '#45a049' : theme.palette.background.paper,
   },
   transition: 'all 0.3s ease-in-out',
-  fontSize: '1.1rem',
+  fontSize: '2rem',
   fontWeight: 500,
   cursor: 'default',
   '&.Mui-disabled': {
     color: 'white',
     opacity: 1
-  }
+  },
+  padding: '25px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  textAlign: 'center',
+  lineHeight: 1.2,
 }));
 
 export default function QuestionDialog({ 
@@ -38,7 +45,6 @@ export default function QuestionDialog({
   onClose, 
   question, 
   category,
-  onScore,
   onAnswerShown
 }) {
   const [showResult, setShowResult] = useState(false);
@@ -90,26 +96,28 @@ export default function QuestionDialog({
     <>
       <Dialog 
         open={open} 
-        maxWidth="sm" 
+        maxWidth="lg"
         fullWidth
         onClose={() => onClose()}
         PaperProps={{
           sx: {
             background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
+            minHeight: '80vh',
+            maxHeight: '90vh',
           }
         }}
       >
         <DialogTitle>
-          <Typography variant="h5" align="center" gutterBottom sx={{ color: 'white' }}>
+          <Typography variant="h4" align="center" gutterBottom sx={{ color: 'white', mb: 3 }}>
             {category.name} - {question.points}分
           </Typography>
           {question?.timeLimit && (
-            <Box sx={{ position: 'relative' }}>
+            <Box sx={{ position: 'relative', mb: 2 }}>
               <LinearProgress 
                 variant="determinate" 
                 value={progressValue}
                 sx={{
-                  height: 10,
+                  height: 15,
                   borderRadius: 5,
                   backgroundColor: '#ffffff33',
                   '& .MuiLinearProgress-bar': {
@@ -118,11 +126,11 @@ export default function QuestionDialog({
                 }}
               />
               <Typography 
-                variant="body2" 
+                variant="h6" 
                 sx={{ 
                   position: 'absolute', 
                   right: 0, 
-                  top: -20, 
+                  top: -30, 
                   color: 'white',
                   fontWeight: 'bold'
                 }}
@@ -134,19 +142,19 @@ export default function QuestionDialog({
         </DialogTitle>
         <DialogContent>
           <Grow in={open} timeout={500}>
-            <Box>
-              <Typography variant="h6" gutterBottom sx={{ my: 2, color: 'white' }}>
+            <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+              <Typography variant="h4" gutterBottom sx={{ my: 4, color: 'white', textAlign: 'center' }}>
                 {question.question}
               </Typography>
-              <Grid container spacing={2}>
+              <Grid container spacing={4} sx={{ flexGrow: 1 }}>
                 {question.options.map((option, index) => (
-                  <Grid item xs={12} key={index}>
-                    <Fade in={true} timeout={500 + index * 200}>
-                      <div>
+                  <Grid item xs={6} key={index} sx={{ display: 'flex' }}>
+                    <Fade in={true} timeout={500 + index * 200} style={{ width: '100%' }}>
+                      <div style={{ width: '100%', height: '100%' }}>
                         <OptionButton
                           variant="contained"
                           disabled
-                          isCorrect={showResult && index === question.correctAnswer}
+                          isCorrect={showResult && option === question.correctAnswer}
                         >
                           {option}
                         </OptionButton>
@@ -158,7 +166,7 @@ export default function QuestionDialog({
             </Box>
           </Grow>
         </DialogContent>
-        <DialogActions sx={{ justifyContent: 'center', pb: 2, flexDirection: 'column', gap: 2 }}>
+        <DialogActions sx={{ justifyContent: 'center', pb: 4, flexDirection: 'column', gap: 3 }}>
           {!showResult && (
             <Button 
               variant="contained" 
@@ -169,7 +177,10 @@ export default function QuestionDialog({
                 '&:hover': {
                   backgroundColor: '#f5f5f5'
                 },
-                width: '200px'
+                width: '400px',
+                height: '80px',
+                fontSize: '2.5rem',
+                borderRadius: '15px',
               }}
             >
               顯示答案
@@ -177,14 +188,19 @@ export default function QuestionDialog({
           )}
           {showResult && (
             <Grow in={showResult}>
-              <Typography variant="h6" sx={{ color: '#4caf50' }}>
-                正確答案：{question.options[question.correctAnswer]}
-              </Typography>
+              <Box sx={{ textAlign: 'center' }}>
+                <Typography variant="h3" sx={{ color: '#4caf50', mb: 3, fontWeight: 'bold' }}>
+                  正確答案：{question.correctAnswer}
+                </Typography>
+                <Typography variant="h4" sx={{ color: '#fff', mt: 3 }}>
+                  {question.explanation}
+                </Typography>
+              </Box>
             </Grow>
           )}
           {timeUp && !showResult && (
             <Grow in={timeUp}>
-              <Typography variant="h6" sx={{ color: '#f44336' }}>
+              <Typography variant="h3" sx={{ color: '#f44336', fontWeight: 'bold' }}>
                 時間到！
               </Typography>
             </Grow>
@@ -199,32 +215,33 @@ export default function QuestionDialog({
           sx: {
             backgroundColor: '#1a237e',
             borderRadius: 3,
-            minWidth: '300px'
+            minWidth: '600px'
           }
         }}
       >
         <DialogTitle sx={{ 
           textAlign: 'center', 
           color: 'white',
-          pt: 3,
-          pb: 2
+          pt: 4,
+          pb: 3,
+          fontSize: '2.5rem'
         }}>
           確認顯示答案
         </DialogTitle>
-        <DialogContent sx={{ pb: 3 }}>
+        <DialogContent sx={{ pb: 4 }}>
           <DialogContentText sx={{ 
             color: 'white',
             textAlign: 'center',
             opacity: 0.9,
-            fontSize: '1.1rem'
+            fontSize: '2rem'
           }}>
             確定要顯示答案嗎？
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ 
           justifyContent: 'center', 
-          pb: 3,
-          gap: 2 
+          pb: 4,
+          gap: 4
         }}>
           <Button 
             onClick={() => setOpenConfirm(false)} 
@@ -235,7 +252,10 @@ export default function QuestionDialog({
                 borderColor: '#fff',
                 backgroundColor: 'rgba(255, 255, 255, 0.1)'
               },
-              width: '100px'
+              width: '200px',
+              height: '70px',
+              fontSize: '1.8rem',
+              borderRadius: '12px'
             }}
             variant="outlined"
           >
@@ -249,7 +269,10 @@ export default function QuestionDialog({
               '&:hover': {
                 backgroundColor: '#f5f5f5'
               },
-              width: '100px'
+              width: '200px',
+              height: '70px',
+              fontSize: '1.8rem',
+              borderRadius: '12px'
             }}
             variant="contained"
           >
