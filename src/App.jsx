@@ -1,11 +1,65 @@
 import { useState, useEffect } from 'react'
-import { Box, Container, Grid, Paper, Typography, Zoom, Slide, Button, IconButton } from '@mui/material'
-import { styled } from '@mui/material/styles'
+import { Box, Container, Grid, Paper, Typography, Zoom, Slide, Button, IconButton, Fade } from '@mui/material'
+import { styled, keyframes } from '@mui/material/styles'
 import UndoIcon from '@mui/icons-material/Undo';
 import categories from './data/categories'
 import questions, { pointValues } from './data/questions'
 import QuestionDialog from './components/QuestionDialog'
 import brainIcon from './assets/img/brain.png'
+
+const floatAnimation = keyframes`
+  0% { transform: translateY(0px) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(5deg); }
+  75% { transform: translateY(10px) rotate(-5deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+`;
+
+const fadeOutUpAnimation = keyframes`
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.6);
+  }
+`;
+
+const typewriterAnimation = keyframes`
+  0% { 
+    clip-path: inset(0 100% 0 0);
+  }
+  100% { 
+    clip-path: inset(0 0 0 0);
+  }
+`;
+
+const blinkCursorAnimation = keyframes`
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+`;
+
+const AnimatedTitle = styled(Typography)`
+  display: inline-block;
+  white-space: nowrap;
+  position: relative;
+  animation: ${typewriterAnimation} 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  &::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background-color: white;
+    animation: ${blinkCursorAnimation} 0.8s infinite;
+  }
+`;
+
+const FloatingIcon = styled('img')`
+  animation: ${floatAnimation} 3s ease-in-out infinite;
+`;
 
 const CategoryCard = styled(Paper)(({ theme, color }) => ({
   padding: theme.spacing(2),
@@ -107,6 +161,7 @@ const ExpandingButton = styled(Button)(({ theme }) => ({
 }));
 
 function App() {
+  const fullTitle = "智慧王遊戲";
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [answeredQuestions, setAnsweredQuestions] = useState(() => {
@@ -114,6 +169,28 @@ function App() {
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showTitle, setShowTitle] = useState(true);
+  const [titleText, setTitleText] = useState(fullTitle);
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  useEffect(() => {
+    // 等待动画完成后消失
+    const timer = setTimeout(() => {
+      setShowTitle(false);
+    }, 1500); // 0.8s动画 + 0.7s等待
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Save to localStorage whenever answeredQuestions changes
   useEffect(() => {
@@ -165,50 +242,96 @@ function App() {
     <Container 
       maxWidth={false} 
       sx={{ 
-        py: { xs: 2, sm: 3, md: 4 },
+        pt: { xs: 16, sm: 18, md: 20 },
+        pb: { xs: 2, sm: 3, md: 4 },
         width: { 
           xs: '98%',
           sm: '95%',
           md: '90%',
           lg: '85%' 
         },
-        margin: '0 auto'
+        margin: '0 auto',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
-      <Slide in={true} direction="down" timeout={1000}>
+      <Box sx={{ 
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: showTitle ? '100vh' : 'auto',
+        backgroundColor: showTitle ? 'rgba(0,0,0,0.9)' : 'transparent',
+        transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: showTitle ? 'center' : 'flex-start',
+        justifyContent: 'center',
+        opacity: isScrolled ? 0 : 1,
+        visibility: isScrolled ? 'hidden' : 'visible',
+        transform: isScrolled ? 'translateY(-100%)' : 'none'
+      }}>
         <Box sx={{ 
           display: 'flex', 
           alignItems: 'center',
           justifyContent: 'center',
-          gap: { xs: 1, sm: 1.5, md: 2 },
-          mb: { xs: 2, sm: 2.5, md: 3 }
+          gap: { xs: 2, sm: 3, md: 4 },
+          transform: showTitle 
+            ? 'translateY(0)' 
+            : 'translateY(0) scale(0.7)',
+          py: showTitle 
+            ? { xs: 4, sm: 6, md: 8 }
+            : { xs: 3, sm: 4, md: 5 },
+          transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+          width: '100%'
         }}>
-          <img 
+          <FloatingIcon 
             src={brainIcon} 
             alt="Brain Icon" 
-            style={{
-              width: { xs: '40px', sm: '50px', md: '60px' },
-              height: { xs: '40px', sm: '50px', md: '60px' },
-              objectFit: 'contain'
+            sx={{
+              width: { 
+                xs: showTitle ? '60px' : '70px',
+                sm: showTitle ? '80px' : '90px',
+                md: showTitle ? '100px' : '110px'
+              },
+              height: { 
+                xs: showTitle ? '60px' : '70px',
+                sm: showTitle ? '80px' : '90px',
+                md: showTitle ? '100px' : '110px'
+              },
+              objectFit: 'contain',
+              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           />
-          <Typography 
+          <AnimatedTitle 
             variant="h1" 
             component="h1"
             sx={{
               fontSize: {
-                xs: '1.8rem',
-                sm: '2.2rem',
-                md: '2.5rem'
-              }
+                xs: showTitle ? '2.5rem' : '2.8rem',
+                sm: showTitle ? '3.5rem' : '3.8rem',
+                md: showTitle ? '4.5rem' : '4.8rem'
+              },
+              color: 'white',
+              textShadow: '4px 4px 8px rgba(0,0,0,0.5)',
+              fontWeight: 'bold',
+              transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           >
-            智慧王遊戲
-          </Typography>
+            {titleText}
+          </AnimatedTitle>
         </Box>
-      </Slide>
+      </Box>
 
-      <Box sx={{ flexGrow: 1, mt: { xs: 2, sm: 3, md: 4 } }}>
+      <Box sx={{ 
+        flexGrow: 1, 
+        opacity: showTitle ? 0 : 1,
+        transition: 'opacity 0.5s ease-in-out',
+        transitionDelay: '0.3s',
+        position: 'relative',
+        zIndex: 1
+      }}>
         <Grid 
           container 
           spacing={{ xs: 1, sm: 1.5, md: 2 }}
@@ -234,27 +357,43 @@ function App() {
               }}
             >
               <CategoryCard color={categories.find(c => c.name === categoryName)?.color || '#1a237e'}>
-                <Typography 
-                  variant="h2" 
-                  component="div" 
-                  className="category-title" 
-                  sx={{ 
-                    color: 'white',
-                    fontWeight: 'bold',
-                    mb: { xs: 1, sm: 1.5, md: 2 },
-                    fontSize: {
-                      xs: '1.4rem',
-                      sm: '1.6rem',
-                      md: '1.8rem'
-                    },
-                    lineHeight: 1.2,
-                    padding: '0 10px',
-                    width: '100%',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
-                  }}
-                >
-                  {categoryName}
-                </Typography>
+                <Box>
+                  <Typography 
+                    variant="h2" 
+                    component="div" 
+                    className="category-title" 
+                    sx={{ 
+                      color: 'white',
+                      fontWeight: 'bold',
+                      mb: { xs: 0.5, sm: 0.75, md: 1 },
+                      fontSize: {
+                        xs: '1.4rem',
+                        sm: '1.6rem',
+                        md: '1.8rem'
+                      },
+                      lineHeight: 1.2,
+                      padding: '0 10px',
+                      width: '100%',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.2)'
+                    }}
+                  >
+                    {categoryName}
+                  </Typography>
+                  <Typography 
+                    variant="subtitle1" 
+                    sx={{ 
+                      color: 'rgba(255,255,255,0.8)',
+                      fontSize: {
+                        xs: '0.8rem',
+                        sm: '0.9rem',
+                        md: '1rem'
+                      },
+                      mb: { xs: 1, sm: 1.5, md: 2 }
+                    }}
+                  >
+                    {categories.find(c => c.name === categoryName)?.nameEn || categoryName}
+                  </Typography>
+                </Box>
                 <Box sx={{ 
                   display: 'flex', 
                   gap: { xs: '4px', sm: '6px', md: '8px' },
