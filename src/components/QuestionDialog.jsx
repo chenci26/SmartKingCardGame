@@ -15,7 +15,9 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
-const OptionButton = styled(Button)(({ theme, isCorrect }) => ({
+const OptionButton = styled(Button, {
+  shouldForwardProp: (prop) => prop !== 'isCorrect'
+})(({ theme, isCorrect }) => ({
   width: '100%',
   height: '100%',
   marginBottom: theme.spacing(2),
@@ -75,7 +77,6 @@ export default function QuestionDialog({
     } else if (timeLeft === 0 && !showResult && !timeUp && question?.timeLimit) {
       handleTimeUp();
     }
-    return () => timer && clearInterval(timer);
   }, [open, timeLeft, question?.timeLimit]);
 
   useEffect(() => {
@@ -120,7 +121,13 @@ export default function QuestionDialog({
         }}
       >
         <DialogTitle>
-          <Typography variant="h4" align="center" gutterBottom sx={{ color: 'white', mb: 3 }}>
+          <Typography 
+            variant="h4" 
+            component="div" 
+            align="center" 
+            gutterBottom 
+            sx={{ color: 'white', mb: 3 }}
+          >
             {category.name} - {question.points}分
           </Typography>
           {question?.timeLimit && (
@@ -139,6 +146,7 @@ export default function QuestionDialog({
               />
               <Typography 
                 variant="h6" 
+                component="div"
                 sx={{ 
                   position: 'absolute', 
                   right: 0, 
@@ -155,12 +163,38 @@ export default function QuestionDialog({
         <DialogContent>
           <Grow in={open} timeout={500}>
             <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <Typography variant="h4" gutterBottom sx={{ my: 4, color: 'white', textAlign: 'center' }}>
-                {question.question}
+              <Typography 
+                variant="h4" 
+                component="div"
+                gutterBottom 
+                sx={{ 
+                  my: 4, 
+                  color: 'white', 
+                  textAlign: 'center',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-word'
+                }}
+              >
+                {question.question.replace(/\\n/g, '\n')}
               </Typography>
-              <Grid container spacing={4} sx={{ flexGrow: 1 }}>
+              <Grid 
+                container 
+                spacing={4} 
+                sx={{ 
+                  flexGrow: 1,
+                  justifyContent: question.options.length === 1 ? 'center' : 'flex-start'
+                }}
+              >
                 {question.options.map((option, index) => (
-                  <Grid item xs={6} key={index} sx={{ display: 'flex' }}>
+                  <Grid 
+                    item 
+                    xs={question.options.length === 1 ? 6 : 6} 
+                    key={index} 
+                    sx={{ 
+                      display: 'flex',
+                      justifyContent: question.options.length === 1 ? 'center' : 'flex-start'
+                    }}
+                  >
                     <Fade in={true} timeout={500 + index * 200} style={{ width: '100%' }}>
                       <div style={{ width: '100%', height: '100%' }}>
                         <OptionButton
@@ -207,6 +241,7 @@ export default function QuestionDialog({
               }}>
                 <Typography 
                   variant="h3" 
+                  component="div"
                   sx={{ 
                     color: '#fff', 
                     mb: 3, 
@@ -271,6 +306,7 @@ export default function QuestionDialog({
                 {question.explanation && (
                   <Typography 
                     variant="h4" 
+                    component="div"
                     sx={{ 
                       color: '#fff', 
                       mt: 3,
@@ -303,7 +339,11 @@ export default function QuestionDialog({
           )}
           {timeUp && !showResult && (
             <Grow in={timeUp}>
-              <Typography variant="h3" sx={{ color: '#f44336', fontWeight: 'bold' }}>
+              <Typography 
+                variant="h3" 
+                component="div"
+                sx={{ color: '#f44336', fontWeight: 'bold' }}
+              >
                 時間到！
               </Typography>
             </Grow>
