@@ -22,7 +22,7 @@ import {
   Divider,
   Tooltip
 } from '@mui/material';
-import { BarChart } from '@mui/x-charts/BarChart';
+import { BarChart } from '@mui/x-charts';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -602,6 +602,18 @@ const ScoreBoardDialog = ({ open, onClose }) => {
                     series={chartData.series}
                     height={500} // 增加图表高度
                     margin={{ top: 20, right: 30, bottom: 50, left: 60 }}
+                    // 添加图例配置，放在右上角
+                    legend={{ 
+                      position: { vertical: 'top', horizontal: 'right' },
+                      padding: 8,
+                      itemMarkWidth: 10,
+                      itemMarkHeight: 10,
+                      markGap: 5,
+                      labelStyle: {
+                        fill: COLORS.text,
+                        fontSize: 14
+                      }
+                    }}
                     sx={{
                       '.MuiChartsAxis-tickLabel': {
                         fill: COLORS.text,
