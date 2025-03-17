@@ -7,6 +7,10 @@ const questions = {
       options: ["(A) 亞馬遜河", "(B) 長江", "(C) 尼羅河", "(D) 密西西比河"],
       correctAnswer: "(C) 尼羅河",
       timeLimit: 30,
+      timerControls: {
+        isRunning: false,
+        currentTime: 30,
+      },
     },
     {
       id: 2,
