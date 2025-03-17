@@ -14,6 +14,7 @@ import {
   DialogContentText
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import Timer from './Timer';
 
 const OptionButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== 'isCorrect'
@@ -62,30 +63,9 @@ export default function QuestionDialog({
   onAnswerShown
 }) {
   const [showResult, setShowResult] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(question?.timeLimit || 0);
-  const [openConfirm, setOpenConfirm] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
-
-  useEffect(() => {
-    let timer;
-    if (open && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0 && !showResult && !timeUp && question?.timeLimit) {
-      handleTimeUp();
-    }
-  }, [open, timeLeft, question?.timeLimit]);
-
-  useEffect(() => {
-    if (open) {
-      setTimeLeft(question?.timeLimit || 0);
-      setShowResult(false);
-      setTimeUp(false);
-    }
-  }, [open, question]);
+  const [openConfirm, setOpenConfirm] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(question?.timeLimit || 0);
 
   const handleShowAnswer = () => {
     setOpenConfirm(true);
@@ -97,6 +77,10 @@ export default function QuestionDialog({
     if (onAnswerShown) {
       onAnswerShown(question.id);
     }
+  };
+
+  const handleTick = (currentTime) => {
+    setTimeLeft(currentTime);
   };
 
   const handleTimeUp = () => {
@@ -131,32 +115,64 @@ export default function QuestionDialog({
             {category.name} - {question.points}分
           </Typography>
           {question?.timeLimit && (
-            <Box sx={{ position: 'relative', mb: 2 }}>
-              <LinearProgress 
-                variant="determinate" 
-                value={progressValue}
-                sx={{
-                  height: 15,
-                  borderRadius: 5,
-                  backgroundColor: '#ffffff33',
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: progressValue > 60 ? '#4caf50' : progressValue > 30 ? '#ff9800' : '#f44336',
-                  }
-                }}
-              />
-              <Typography 
-                variant="h6" 
-                component="div"
-                sx={{ 
-                  position: 'absolute', 
-                  right: 0, 
-                  top: -30, 
-                  color: 'white',
-                  fontWeight: 'bold'
-                }}
-              >
-                {timeLeft}秒
-              </Typography>
+            <Box sx={{ 
+              position: 'relative', 
+              mb: 2,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2
+            }}>
+              <Box sx={{ position: 'relative' }}>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={progressValue}
+                  sx={{
+                    height: 15,
+                    borderRadius: 5,
+                    backgroundColor: '#ffffff33',
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: progressValue > 60 ? '#4caf50' : progressValue > 30 ? '#ff9800' : '#f44336',
+                    }
+                  }}
+                />
+                <Typography 
+                  variant="h6" 
+                  component="div"
+                  sx={{ 
+                    position: 'absolute',
+                    right: 0,
+                    top: -30,
+                    color: 'white',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
+                </Typography>
+              </Box>
+              <Box sx={{ 
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                mt: 1
+              }}>
+                <Timer 
+                  initialTime={question.timeLimit} 
+                  onTimeUp={handleTimeUp}
+                  onTick={handleTick}
+                  isActive={open && !showResult}
+                  sx={{
+                    '& .timer-display': {
+                      display: 'none'
+                    },
+                    '& .timer-button': {
+                      margin: '0 8px',
+                      padding: '8px 16px',
+                      borderRadius: '8px',
+                      fontSize: '1.2rem'
+                    }
+                  }}
+                />
+              </Box>
             </Box>
           )}
         </DialogTitle>
