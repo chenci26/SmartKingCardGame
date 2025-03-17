@@ -6,6 +6,8 @@ import categories from './data/categories'
 import questions, { pointValues } from './data/questions'
 import QuestionDialog from './components/QuestionDialog'
 import brainIcon from './assets/img/brain.png'
+import ScoreBoard from './components/ScoreBoard'
+import ScoreBoardDialog from './components/ScoreBoardDialog'
 
 const floatAnimation = keyframes`
   0% { transform: translateY(0px) rotate(0deg); }
@@ -172,6 +174,11 @@ function App() {
   const [showTitle, setShowTitle] = useState(true);
   const [titleText, setTitleText] = useState(fullTitle);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [scoreBoardOpen, setScoreBoardOpen] = useState(false);
+  const [teams, setTeams] = useState(() => {
+    const savedTeams = localStorage.getItem('scoreboardTeams');
+    return savedTeams ? JSON.parse(savedTeams) : [];
+  });
   
   useEffect(() => {
     // 等待动画完成后消失
@@ -196,6 +203,14 @@ function App() {
   useEffect(() => {
     localStorage.setItem('answeredQuestions', JSON.stringify([...answeredQuestions]));
   }, [answeredQuestions]);
+
+  // Add this useEffect to load teams from localStorage
+  useEffect(() => {
+    const savedTeams = localStorage.getItem('scoreboardTeams');
+    if (savedTeams) {
+      setTeams(JSON.parse(savedTeams));
+    }
+  }, [scoreBoardOpen]);
 
   const handlePointClick = (category, points) => {
     // Don't open if already answered
@@ -236,6 +251,14 @@ function App() {
 
   const isQuestionAnswered = (category, points) => {
     return answeredQuestions.has(`${category.name}-${points}`);
+  };
+
+  const handleScoreBoardOpen = () => {
+    setScoreBoardOpen(true);
+  };
+
+  const handleScoreBoardClose = () => {
+    setScoreBoardOpen(false);
   };
 
   return (
@@ -322,6 +345,22 @@ function App() {
             {titleText}
           </AnimatedTitle>
         </Box>
+      </Box>
+
+      {/* Add ScoreBoard button in the top-right corner */}
+      <Box sx={{ 
+        position: 'fixed',
+        top: { xs: 16, sm: 24, md: 32 },
+        right: { xs: 16, sm: 24, md: 32 },
+        zIndex: 1000,
+        opacity: showTitle ? 0 : 1,
+        transition: 'opacity 0.5s ease-in-out',
+        transitionDelay: '0.3s',
+      }}>
+        <ScoreBoard 
+          onClick={handleScoreBoardOpen} 
+          teamCount={teams.length}
+        />
       </Box>
 
       <Box sx={{ 
@@ -458,6 +497,12 @@ function App() {
           onAnswerShown={handleAnswerShown}
         />
       )}
+
+      {/* Add ScoreBoardDialog */}
+      <ScoreBoardDialog
+        open={scoreBoardOpen}
+        onClose={handleScoreBoardClose}
+      />
     </Container>
   )
 }
