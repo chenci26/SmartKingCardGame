@@ -7,10 +7,6 @@ const questions = {
       options: ["(A) 亞馬遜河", "(B) 長江", "(C) 尼羅河", "(D) 密西西比河"],
       correctAnswer: "(C) 尼羅河",
       timeLimit: 30,
-      timerControls: {
-        isRunning: false,
-        currentTime: 30,
-      },
     },
     {
       id: 2,
@@ -41,7 +37,7 @@ const questions = {
     {
       id: 5,
       points: 1000,
-      question: "中國萬里長城總長度為多少公里？ \\n(最接近的隊伍得分)",
+      question: "中國萬里長城總長度為多少公里？ \\n(否則最接近的隊伍得分)",
       options: ["請簡答"],
       correctAnswer: "21196公里",
       timeLimit: 120,
@@ -132,7 +128,7 @@ const questions = {
         "漫威宇宙中 無限手套總共有鑲嵌六顆寶石 請說出有哪些寶石(一個100分)",
       options: ["請簡答"],
       correctAnswer: "\\n1.心靈寶石 \\n2.靈魂寶石 \\n3.空間寶石 \\n4.力量寶石 \\n5.時間寶石 \\n6.現實寶石",
-      timeLimit: 80,
+      timeLimit: 60,
     },
     {
       id: 5,
@@ -141,7 +137,7 @@ const questions = {
         "哈利波特中 佛地魔非常相信數字七的魔法屬性 他的七個分靈體分別有哪些，說出物件就好(一個100分，全對1000)",
       options: ["請簡答"],
       correctAnswer: "\\n1.日記 \\n2.戒指 \\n3.王冠 \\n4.小金匣 \\n5.獎盃 \\n6.哈利波特 \\n7.蛇",
-      timeLimit: 120,
+      timeLimit: 100,
     },
   ],
   "動漫(一)": [
@@ -175,8 +171,8 @@ const questions = {
       question:
         "《鋼之鍊金術師》中，愛德華·艾力克的禁忌鍊金術導致他與他弟弟分別失去了什麼？ \\n（共三樣東西 身體部位左右邊也須明確說出 每個答案200分)",
       options: ["請簡答"],
-      correctAnswer: "愛德華的右手與左腿 弟弟的身體",
-      timeLimit: 30,
+      correctAnswer: "愛德華的右手與左腿、弟弟的身體",
+      timeLimit: 45,
     },
     {
       id: 5,
@@ -186,6 +182,7 @@ const questions = {
       options: ["請簡答"],
       correctAnswer:
         "\\n1.貍貓 \\n2.貓妖 \\n3.巨龜 \\n4.猴子 \\n5.馬與海豚 \\n6.螢火蟲與蛞蝓 \\n7.獨角仙 \\n8.章魚與牛 \\n9.狐狸",
+      timeLimit: 120,
     },
   ],
   "動漫(二)": [
@@ -201,7 +198,7 @@ const questions = {
       id: 2,
       points: 200,
       question:
-      "《名偵探柯南：往天國的倒數計時》，這部電影版中劇情到了最後步美是精準的默數了幾秒鐘才讓大家得以逃出生天？",
+        "《名偵探柯南：往天國的倒數計時》，這部電影版中劇情到了最後步美是精準的默數了幾秒鐘才讓大家得以逃出生天？",
       options: ["(A) 15秒", "(B) 20秒", "(C) 25秒", "(D) 30秒"],
       correctAnswer: "(D) 30秒",
       timeLimit: 30,
@@ -209,10 +206,10 @@ const questions = {
     {
       id: 3,
       points: 400,
-      question: "在《刀劍神域》中，亞絲娜在Aincrad篇中所屬的公會是？",
+      question: "在《刀劍神域》中，亞絲娜在艾恩葛朗特(Aincrad)篇中所屬的公會是？",
       options: [
         "(A) 血盟騎士團",
-        "(B) 艾恩葛朗防衛隊",
+        "(B) 艾恩葛朗特防衛隊",
         "(C) 神聖之刃",
         "(D) 劍聖會",
       ],
@@ -226,15 +223,18 @@ const questions = {
         "在《一拳超人》中，埼玉在初次成為職業英雄時，請問他的階級與牌位分別是多少? \\n(分別300分)",
       options: ["請簡答"],
       correctAnswer: "屬於C級，並且排名為 第337位",
+      timeLimit: 45,
     },
     {
       id: 5,
       points: 1000,
       question:
-        "海賊王的草帽一行人登船的順序分別是? \\n(小提示:共10位，位置正確的答案每個100分，全對1000分)",
+        "海賊王的草帽一行人登船的順序分別是? \\n(小提示:共10位，登船不代表正式入夥，位置正確的答案每個100分，全對1000分)",
       options: ["請簡答"],
       correctAnswer: "\\n1.魯夫 \\n2.索隆 \\n3.娜美 \\n4.騙人布 \\n5.香吉士 \\n6.喬巴 \\n7.羅賓 \\n8.佛朗基 \\n9.布魯克 \\n10.吉貝爾",
-      explanation: "這是大家所知道的上船順序，然而其實尾田老師給他們的正式入夥順序， 索隆=>香吉士=>娜美=>騙人布=>佛朗基=>布魯克"},
+      explanation: "這是大家所知道的上船順序，然而其實尾田老師給他們的正式入夥順序， 索隆=>香吉士=>娜美=>騙人布=>佛朗基=>布魯克",
+      timeLimit: 120,
+    },
   ],
   卡通: [
     {
@@ -263,24 +263,27 @@ const questions = {
       points: 400,
       question: "請說出讓野原廣智背了三十二年房貸的公寓名稱？",
       options: ["請簡答"],
-      correctAnswer: "胯下痛公寓",
+      correctAnswer: "胯下痛公寓(雞飛狗跳莊)",
+      timeLimit: 45,
     },
     {
       id: 4,
       points: 600,
       question:
-        "Cartoon Network 在90年代的經典有名卡通，請說出六個(每個答案100分)",
+        "Cartoon Network 的經典有名卡通，請說出六個(每個答案100分)",
       options: ["請簡答"],
       correctAnswer:
-        "德克斯特的實驗室 飛天小女警 雞與牛 拼命郎約翰尼 膽小狗英雄 搗蛋三傻",
+        "德克斯特的實驗室 飛天小女警 雞與牛 拼命郎約翰尼 膽小狗英雄 搗蛋三傻 傑克武士...(以主持人那邊的答案為主)",
+      timeLimit: 60,
     },
     {
       id: 5,
       points: 1000,
       question:
-        "《數碼寶貝大冒險》（1999）（第一代）主角團的數碼寶貝名稱(共八隻  答對一之100分 全對1000分)",
+        "《數碼寶貝大冒險》（1999）（第一代）主角團的數碼寶貝成長期名稱(共八隻  答對一隻100分 全對1000分)",
       options: ["請簡答"],
       correctAnswer: "亞古獸 加布獸 比丘獸 甲蟲獸 巴魯獸 哥瑪獸 巴達獸 迪路獸",
+      timeLimit: 120,
     },
   ],
   運動: [
@@ -297,9 +300,9 @@ const questions = {
       points: 200,
       question: "NBA歷史上，最年輕的MVP得主是誰？",
       options: [
-        "(A) 沙奎爾·奧尼爾",
+        "(A) 俠客·歐尼爾",
         "(B) 勒布朗·詹姆斯",
-        "(C) 德瑞克·羅斯 - Derrick Martell Rose",
+        "(C) 德瑞克·羅斯",
         "(D) 凱文·杜蘭特",
       ],
       correctAnswer: "(C) 德瑞克·羅斯",
@@ -311,6 +314,7 @@ const questions = {
       question: "2020年東京奧運會的開幕式在哪個月舉行？",
       options: ["請簡答"],
       correctAnswer: "7月",
+      timeLimit: 30,
     },
     {
       id: 4,
@@ -318,6 +322,7 @@ const questions = {
       question: "正規排球場的長跟寬各為幾公尺(各300分)",
       options: ["請簡答"],
       correctAnswer: "長18公尺 寬9公尺",
+      timeLimit: 45,
     },
     {
       id: 5,
@@ -326,6 +331,7 @@ const questions = {
         "馬拉松比賽的標準距離是多少公里？(最接近的隊伍得分，提示:小數點後3位)",
       options: ["請簡答"],
       correctAnswer: "馬拉松比賽的標準距離為42.195公里",
+      timeLimit: 120,
     },
   ],
   明星: [
@@ -350,10 +356,10 @@ const questions = {
       points: 400,
       question: "誰是電影《冰雪奇緣》中的艾莎女王的配音演員？",
       options: [
-        "(A) 艾瑪·斯通",
+        "(A) 艾瑪·史東",
         "(B) 凱特·溫斯萊特",
         "(C) 伊迪娜·曼佐",
-        "(D) 泰勒·斯威夫特",
+        "(D) 泰勒絲",
       ],
       correctAnswer: "(C) 伊迪娜·曼佐",
       timeLimit: 30,
@@ -364,14 +370,16 @@ const questions = {
       question: "曾經組成「F4」的四位台灣男星，請問是哪4位?(一個答案150分)",
       options: ["請簡答"],
       correctAnswer: "言承旭、吳建豪、朱孝天、周渝民",
+      timeLimit: 45,
     },
     {
       id: 5,
       points: 1000,
       question:
-        "這世界有四樣東西你不能碰 基努李維的X 連恩尼遜的XX 丹佐華盛頓的XX 傑森斯坦森的XX(一個200，全對1000)",
+        "這世界有四樣東西你不能碰 \\n基努李維的X 連恩尼遜的XX 丹佐華盛頓的XX 傑森史塔森的XX \\n(一個200，全對1000)",
       options: ["請簡答"],
       correctAnswer: "狗 女兒 朋友 包裹",
+      timeLimit: 120,
     },
   ],
   港片: [
@@ -400,6 +408,7 @@ const questions = {
         "【嚦咕嚦咕新年財】最後麻將俠大賽的決賽時，劉青雲在裡面扮演的青雲，最後穿的毛衣是什麼顏色的?",
       options: ["請簡答"],
       correctAnswer: "紫色",
+      timeLimit: 30,
     },
     {
       id: 4,
@@ -408,7 +417,8 @@ const questions = {
         "【少林足球】電影中 六個師兄弟的武功絕學各是什麼招式(一個100分)",
       options: ["請簡答"],
       correctAnswer:
-        "大師兄-鐵頭功 二師兄-旋風地堂腿 三師兄-金鐘罩鐵布衫 四師兄-鬼影擒拿手 五師兄-大力金剛腿 六師弟-輕功水上漂",
+        "\\n1.大師兄-鐵頭功 \\n2.二師兄-旋風地堂腿 \\n3.三師兄-金鐘罩鐵布衫 \\n4.四師兄-鬼影擒拿手 \\n5.五師兄-大力金剛腿 \\n6.六師弟-輕功水上漂",
+      timeLimit: 60,
     },
     {
       id: 5,
@@ -440,25 +450,28 @@ const questions = {
       id: 3,
       points: 400,
       question:
-        "根據報導，某國政府教育部近來發布規定，禁止中學成立同性戀社團，此規定與宣布受到人權團體批評。請問下述批評何者最可能為人權團體之訴求？",
-      options: ["請簡答"],
-      correctAnswer: "違反學生之結社自由",
+        "某國政府教育部規定，禁止中學成立同性戀社團。此規定與宣布受到人權團體批評。請問下述批評何者最可能為人權團體之訴求？",
+      options: ["(A) 該國做法有違兩性平等的原則", "(B) 該國做法限制消費者選擇自由", "(C) 該國做法侵犯家長之親權行使", "(D) 該國做法違反學生之結社自由"],
+      correctAnswer: "(D) 該國做法違反學生之結社自由",
+      timeLimit: 60,
     },
     {
       id: 4,
       points: 600,
       question:
-        "台灣的總統有3項憲法賦予的「特別權力」分別是甚麼?共三個 答對一題200分",
+        "台灣的「五院制」指的是中華民國政府的五大權力機關，分別為甚麼? \\n(答對一題100分，全對600分)",
       options: ["請簡答"],
-      correctAnswer: "公布法律、發布緊急命令、解散立法院",
+      correctAnswer: "行政院 立法院 司法院 考試院 監察院",
+      timeLimit: 60,
     },
     {
       id: 5,
       points: 1000,
       question:
-        "台灣的「五院制」指的是中華民國政府的五大權力機關，分別為甚麼?答對一題200分",
+        "請寫出台灣歷代總統， \\n(包含現任共有八位，不用先後順序，答對一題100分，全對1000分)",
       options: ["請簡答"],
-      correctAnswer: "行政院 立法院 司法院 考試院 監察院",
+      correctAnswer: "\\n蔣中正（1948-1975\\n嚴家淦（1975-1978\\n蔣經國（1978-1988\\n李登輝（1988-2000\\n陳水扁（2000-2008\\n馬英九（2008-2016\\n蔡英文（2016-2024\\n賴清德（現任）",
+      timeLimit: 80,
     },
   ],
   國文: [
@@ -489,6 +502,7 @@ const questions = {
       question: "四大名著(答出一個一百分)",
       options: ["請簡答"],
       correctAnswer: "《三國演義》《水滸傳》《西遊記》《紅樓夢》",
+      timeLimit: 45,
     },
     {
       id: 4,
@@ -497,14 +511,16 @@ const questions = {
         "「道阻且長，行則將至；行而不辭，何必論道？」 出自哪位哲學家的哪個著作？(各300分)",
       options: ["請簡答"],
       correctAnswer: "老子《道德經》",
+      timeLimit: 60,
     },
     {
       id: 5,
       points: 1000,
       question:
-        "以【真】為中心 上下左右加上一個字來造詞 依照教育部國語辭典能查到的給分 (一個100分，滿分1000)",
+        "以【真】為中心 上下左右加上一個字來造詞 依照教育部國語辭典能查到的給分 \\n(一個200分，滿分1000)",
       options: ["請簡答"],
-      correctAnswer: "以國文辭典為主",
+      correctAnswer: "以教育部國文辭典為主",
+      timeLimit: 30,
     },
   ],
   生物: [
@@ -519,7 +535,7 @@ const questions = {
     {
       id: 2,
       points: 200,
-      question: "可以用屁股呼吸的動物",
+      question: "請問下列哪個是可以用屁股呼吸的動物",
       options: ["(A) 鱷魚", "(B) 鯨魚", "(C) 烏龜", "(D) 馬"],
       correctAnswer: "(C) 烏龜",
       timeLimit: 30,
@@ -530,6 +546,7 @@ const questions = {
       question: "請說出身體組成 95% 是水的動物",
       options: ["請簡答"],
       correctAnswer: "水母",
+      timeLimit: 30,
     },
     {
       id: 4,
@@ -537,14 +554,16 @@ const questions = {
       question: "請說出DNA跟RNA的中文翻譯名(各三百)",
       options: ["請簡答"],
       correctAnswer: "去氧核糖核酸(DNA) 核糖核酸(RNA)",
+      timeLimit: 45,
     },
     {
       id: 5,
       points: 1000,
       question:
-        "吉尼斯世界紀錄中，擁有最長性高潮的哺乳動物是什麼 持續最長時間又是多久(各五百分)",
+        "吉尼斯世界紀錄中，擁有最長性高潮的哺乳動物是什麼 持續最長時間又是多久(各五百分，最接近的得分)",
       options: ["請簡答"],
       correctAnswer: "豬 90分鐘",
+      timeLimit: 60,
     },
   ],
   音樂: [
@@ -559,7 +578,7 @@ const questions = {
     {
       id: 2,
       points: 200,
-      question: "猜歌名 前奏放五秒",
+      question: "猜歌名 前奏放前奏",
       options: ["請簡答"],
       correctAnswer: "稻香",
       timeLimit: 30,
@@ -570,6 +589,7 @@ const questions = {
       question: "下列哪一位作曲家並非「維也納古典學派」的代表人物？",
       options: ["(A) 海頓", "(B) 莫札特", "(C) 貝多芬", "(D) 蕭邦"],
       correctAnswer: "(D) 蕭邦",
+      timeLimit: 30,
     },
     {
       id: 4,
@@ -577,13 +597,15 @@ const questions = {
       question: "說出6張周杰倫的專輯名稱 每個答案100分",
       options: ["請簡答"],
       correctAnswer: "以主持人那的答案庫為主",
+      timeLimit: 45,
     },
     {
       id: 5,
       points: 1000,
-      question: "說出美國紐約百老匯的十大音樂劇名稱5個 每個答案200分",
+      question: "說出美國紐約百老匯的著名音樂劇名稱5個 \\n(每個答案200分 最多1000分)",
       options: ["請簡答"],
       correctAnswer: "以主持人那的答案庫為主",
+      timeLimit: 120,
     },
   ],
   影集: [
@@ -620,6 +642,7 @@ const questions = {
         "絕命毒師的主角沃特·懷特第一次製作冰毒的純度高達多少? 並且他在業界上的稱號是甚麼?  答對一個得200分",
       options: ["請簡答"],
       correctAnswer: "97% 海森堡",
+      timeLimit: 45,
     },
     {
       id: 4,
@@ -628,14 +651,16 @@ const questions = {
         "第一季的魷魚遊戲中主角的號碼是多少? 並且她在第二關選到的椪糖圖案是甚麼? 答對一個得300分",
       options: ["請簡答"],
       correctAnswer: "456號 雨傘",
+      timeLimit: 45,
     },
     {
       id: 5,
       points: 1000,
-      question: "生活大爆炸的4人主角團分別畢業的學校是?每個答案250分",
+      question: "生活大爆炸的4人主角團分別畢業的學校是? \\<nav></nav>(謝爾頓 萊納德 霍華德 拉金)(每個答案300分，全對1000分)",
       options: ["請簡答"],
       correctAnswer:
-        "謝耳朵-加州理工學院 萊納德-普林斯頓大學 霍華德-麻省理工學院 拉金-哈佛大學",
+        "謝爾頓-加州理工學院 萊納德-普林斯頓大學 霍華德-麻省理工學院 拉金-哈佛大學",
+      timeLimit: 120,
     },
   ],
   飲食與烹飪: [
@@ -663,6 +688,7 @@ const questions = {
         "舒肥（Sous-vide） 是一種先將食物密封並放入低溫水浴中，利用長時間的溫度控制來烹調食物的技術 食物通常會以非常精確的低溫，通常在 ??°C 到 ??°C 之間?",
       options: ["請簡答"],
       correctAnswer: "50°C 到 85°C",
+      timeLimit: 45,
     },
     {
       id: 4,
@@ -671,6 +697,7 @@ const questions = {
         "戈登·拉姆齊的《地獄廚房》最具代表性的威靈頓牛排，其組成包含以下幾個主要元素? 說出每個元素得100分(共六個)",
       options: ["請簡答"],
       correctAnswer: "菲力牛排 蘑菇醬 帕瑪火腿 黃芥末 千層酥皮 蛋黃液",
+      timeLimit: 90,
     },
     {
       id: 5,
@@ -679,6 +706,7 @@ const questions = {
         "截至2023年8月23日，X辣椒（Pepper X）被吉尼斯世界紀錄認證為世界上最辣的辣椒，其辣度達到多少斯科維爾指標（SHU）? 最接近者得分",
       options: ["請簡答"],
       correctAnswer: "2693000",
+      timeLimit: 60,
     },
   ],
   神話故事: [
@@ -709,6 +737,7 @@ const questions = {
       question: "根據中國神話，哪個動物是女媧用來補天的？",
       options: ["請簡答"],
       correctAnswer: "烏龜",
+      timeLimit: 30,
     },
     {
       id: 4,
@@ -721,15 +750,17 @@ const questions = {
         "(D) 芬里爾",
       ],
       correctAnswer: "(C) 尤克特拉希爾",
+      timeLimit: 30,
     },
     {
       id: 5,
       points: 1000,
       question:
-        "埃及神話中的主神太陽神，再早晨、中午、傍晚，分別有不同的名字，請問分別為什麼? 每個答案300分 全對1000分",
+        "埃及神話中的主神太陽神，在早晨、中午、傍晚，分別有不同的名字，請問分別為什麼? \\n(每個答案300分 全對1000分)",
       options: ["請簡答"],
       correctAnswer:
         "黎明破曉的早晨稱做「凱布利」 蔚藍無比的中午稱做「瑞」或「拉」 彩霞滿天的傍晚稱做「亞圖姆」",
+      timeLimit: 90,
     },
   ],
   電腦遊戲: [
@@ -738,8 +769,8 @@ const questions = {
       points: 100,
       question:
         "《英雄聯盟》（League of Legends）中，以下哪位角色是以「忍者」為主題的？",
-      options: ["(A) 提摩", "(B) 亞索", "(C) 劫", "(D) 琴女"],
-      correctAnswer: "(C) 劫",
+      options: ["(A) 卡特蓮娜", "(B) 易大師", "(C) 凱能", "(D) 飛斯"],
+      correctAnswer: "(C) 凱能",
       timeLimit: 30,
     },
     {
@@ -756,6 +787,7 @@ const questions = {
       question: "大吉大利，今晚吃雞！ 這句話出自於哪款遊戲?",
       options: ["請簡答"],
       correctAnswer: "絕地求生(PUBG)",
+      timeLimit: 30,
     },
     {
       id: 4,
@@ -764,14 +796,16 @@ const questions = {
         "《魔獸世界》（World of Warcraft）中，哪位角色被稱為「巫妖王」？說出全名600分，只說出部分名300。",
       options: ["請簡答"],
       correctAnswer: "阿薩斯·米奈希爾",
+      timeLimit: 60,
     },
     {
       id: 5,
       points: 1000,
       question:
-        "以下的魔物獵人作品的封面獸分別是甚麼? (每個答案200分)魔物獵人：世界 魔物獵人世界：Iceborne 魔物獵人：崛起（Rise） 魔物獵人崛起：曙光（Sunbreak）魔物獵人：荒野",
+        "以下的魔物獵人作品的封面獸分別是甚麼? (每個答案200分) \\n世界、世界:Iceborne、崛起(Rise)、崛起:曙光(Sunbreak)、荒野",
       options: ["請簡答"],
-      correctAnswer: "滅盡龍 冰呪龍 怨虎龍 爵銀龍 鎖刃龍",
+      correctAnswer: "滅盡龍 冰呪(咒)龍 怨虎龍 爵銀龍 鎖刃龍",
+      timeLimit: 120,
     },
   ],
   掌上遊戲: [
@@ -805,23 +839,25 @@ const questions = {
         "Candy Crush 糖果 截至2025/2/26目前已經有幾關可供玩家遊玩? 數字最接近的組別得分",
       options: ["請簡答"],
       correctAnswer: "18560",
+      timeLimit: 60,
     },
     {
       id: 4,
       points: 600,
       question:
-        "《瑪利歐賽車 8 豪華版》（Mario Kart 8 Deluxe）中的全部攻擊道具(共6種，三連的就不用說了)說出一種得一百分",
+        "《瑪利歐賽車 8 豪華版》（Mario Kart 8 Deluxe）中的全部攻擊道具(共6種 說出一種得一百分)",
       options: ["請簡答"],
-      correctAnswer: "香蕉皮 綠色龜殼 紅色龜殼 尖刺龜殼 火焰花 迴力鏢花",
+      correctAnswer: "香蕉皮 綠色龜殼 紅色龜殼 藍龜殼(尖刺) 火焰花 迴力鏢花",
     },
     {
       id: 5,
       points: 1000,
       question:
-        "寶可夢的御三家有哪幾隻? 請分別說出一二三世代 每隻100分 全對1000分",
+        "寶可夢的御三家有哪幾隻? 請分別說出一二三世代 \\n(每隻100分 全對1000分)",
       options: ["請簡答"],
       correctAnswer:
-        "第一世代: 妙蛙種子 小火龍 傑尼龜  第二世代: 菊草葉 火球鼠 小鋸鱷  第三世代: 木守宮 火稚雞 水躍魚",
+        "第一世代: 妙蛙種子 小火龍 傑尼龜 \\n第二世代: 菊草葉 火球鼠 小鋸鱷 \\n第三世代: 木守宮 火稚雞 水躍魚",
+      timeLimit: 120,
     },
   ],
 };
