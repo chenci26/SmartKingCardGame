@@ -543,9 +543,10 @@ const questions = {
     {
       id: 3,
       points: 400,
-      question: "請說出身體組成 95% 是水的動物",
+      question: "請說出哪一種水果的 DNA 和人類最相似？",
       options: ["請簡答"],
-      correctAnswer: "水母",
+      correctAnswer: "香蕉",
+      explanation: "根據一項研究顯示，人類和香蕉之間的DNA 有近50% 的相似。",
       timeLimit: 30,
     },
     {
@@ -685,9 +686,10 @@ const questions = {
       id: 3,
       points: 400,
       question:
-        "舒肥（Sous-vide） 是一種先將食物密封並放入低溫水浴中，利用長時間的溫度控制來烹調食物的技術 食物通常會以非常精確的低溫，通常在 ??°C 到 ??°C 之間?",
-      options: ["請簡答"],
-      correctAnswer: "50°C 到 85°C",
+        "請問下列中，含水量最高的水果為何?",
+      options: ["(A) 黃瓜", "(B) 西瓜", "(C) 哈密瓜", "(D) 草莓"],
+      correctAnswer: "(A) 黃瓜",
+      explanation: "黃瓜96.7%, 西瓜92%, 哈密瓜90%, 草莓92%",
       timeLimit: 45,
     },
     {
@@ -812,24 +814,25 @@ const questions = {
     {
       id: 1,
       points: 100,
-      question: "以下哪款手遊被認為是「最燒錢的課金遊戲」之一？",
+      question: "任天堂的英文全名是？",
       options: [
-        "(A) 《原神》",
-        "(B) 《碧藍航線》",
-        "(C) 《Fate/Grand Order》",
-        "(D) 《明日方舟》",
+        "(A) Nintendo",
+        "(B) Ningtendo",
+        "(C) Nintando",
+        "(D) Nintendal",
       ],
-      correctAnswer: "(C) 《Fate/Grand Order》",
-      explanation: "FGO 的課金回報機率極低，號稱「真正的高課金遊戲」",
+      correctAnswer: "(A) Nintendo",
+      explanation: "Nintendo 是任天堂的英文全名",
       timeLimit: 30,
     },
     {
       id: 2,
       points: 200,
       question:
-        "《神魔之塔》中，哪個數字代表最大 Combo？超過這個數字之後都會以XX+表示",
-      options: ["請簡答"],
-      correctAnswer: "30",
+        "GameBoy是日本任天堂公司在1989年發售的第一代可攜式掌上遊戲機，請問GameBoy正面的按鈕總共有幾顆？(十字方向鍵只算一顆)",
+      options: ["(A) 3", "(B) 4", "(C) 5", "(D) 6"],
+      correctAnswer: "(C) 5",
+      explanation: "十字方向鍵、Select、Start、A、B",
       timeLimit: 30,
     },
     {
