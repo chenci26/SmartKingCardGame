@@ -686,10 +686,10 @@ const questions = {
       id: 3,
       points: 400,
       question:
-        "請問下列中，含水量最高的水果為何?",
-      options: ["(A) 黃瓜", "(B) 西瓜", "(C) 哈密瓜", "(D) 草莓"],
+        "請問下列中，含水量最高的蔬果為何?",
+      options: ["(A) 黃瓜", "(B) 西瓜", "(C) 哈密瓜", "(D) 番茄"],
       correctAnswer: "(A) 黃瓜",
-      explanation: "黃瓜96.7%, 西瓜92%, 哈密瓜90%, 草莓92%",
+      explanation: "黃瓜96.7%, 西瓜92%, 哈密瓜90%, 草莓94.5%",
       timeLimit: 45,
     },
     {
