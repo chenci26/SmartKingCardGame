@@ -1,0 +1,2 @@
+cd /d G:\實況相關\實況工具程式\SmartKingCardGame
+pnpm run dev
