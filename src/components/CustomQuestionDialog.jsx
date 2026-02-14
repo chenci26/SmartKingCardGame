@@ -71,6 +71,8 @@ function CustomQuestionDialog({
     points: 100,
     question: '',
     imageUrl: '',
+    audioUrl: '',
+    videoUrl: '',
     options: ['(A) ', '(B) ', '(C) ', '(D) '],
     correctAnswer: '',
     explanation: '',
@@ -159,6 +161,8 @@ function CustomQuestionDialog({
       points: 100,
       question: '',
       imageUrl: '',
+      audioUrl: '',
+      videoUrl: '',
       options: ['(A) ', '(B) ', '(C) ', '(D) '],
       correctAnswer: '',
       explanation: '',
@@ -199,6 +203,8 @@ function CustomQuestionDialog({
       points: question.points,
       question: question.question,
       imageUrl: question.imageUrl || '',
+      audioUrl: question.audioUrl || '',
+      videoUrl: question.videoUrl || '',
       options: question.options,
       correctAnswer: question.correctAnswer,
       explanation: question.explanation || '',
@@ -217,6 +223,8 @@ function CustomQuestionDialog({
       points: parseInt(questionForm.points),
       question: questionForm.question,
       imageUrl: questionForm.imageUrl || undefined,
+      audioUrl: questionForm.audioUrl || undefined,
+      videoUrl: questionForm.videoUrl || undefined,
       options: questionForm.options.filter(opt => opt.trim() !== ''),
       correctAnswer: questionForm.correctAnswer,
       explanation: questionForm.explanation || undefined,
@@ -254,6 +262,8 @@ function CustomQuestionDialog({
       points: 100,
       question: '',
       imageUrl: '',
+      audioUrl: '',
+      videoUrl: '',
       options: ['(A) ', '(B) ', '(C) ', '(D) '],
       correctAnswer: '',
       explanation: '',
@@ -416,6 +426,8 @@ function CustomQuestionDialog({
             points: 100,
             question: "世界上最長的河流是哪一條？",
             imageUrl: "https://example.com/image.jpg",
+            audioUrl: "https://example.com/audio.mp3",
+            videoUrl: "https://example.com/video.mp4",
             options: ["(A) 亞馬遜河", "(B) 長江", "(C) 尼羅河", "(D) 密西西比河"],
             correctAnswer: "(C) 尼羅河",
             explanation: "尼羅河長約6650公里",
@@ -564,21 +576,29 @@ function CustomQuestionDialog({
                 onChange={(e) => handleQuestionChange('categoryName', e.target.value)}
                 label="選擇類別"
               >
-                {existingCategories.map((cat) => (
-                  <MenuItem key={cat.id} value={cat.name}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Box
-                        sx={{
-                          width: 20,
-                          height: 20,
-                          backgroundColor: cat.color,
-                          borderRadius: '50%',
-                        }}
-                      />
-                      {cat.name} - {cat.nameEn}
-                    </Box>
+                {customCategories.length === 0 ? (
+                  <MenuItem disabled>
+                    <Typography variant="body2" color="text.secondary">
+                      請先添加自定義類別
+                    </Typography>
                   </MenuItem>
-                ))}
+                ) : (
+                  customCategories.map((cat) => (
+                    <MenuItem key={cat.id} value={cat.name}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Box
+                          sx={{
+                            width: 20,
+                            height: 20,
+                            backgroundColor: cat.color,
+                            borderRadius: '50%',
+                          }}
+                        />
+                        {cat.name} - {cat.nameEn}
+                      </Box>
+                    </MenuItem>
+                  ))
+                )}
               </Select>
             </FormControl>
 
@@ -643,6 +663,70 @@ function CustomQuestionDialog({
                 <Typography variant="caption" color="error" sx={{ display: 'none' }}>
                   無法載入圖片，請檢查網址是否正確
                 </Typography>
+              </Box>
+            )}
+
+            <TextField
+              fullWidth
+              label="音頻網址（可選）"
+              value={questionForm.audioUrl}
+              onChange={(e) => handleQuestionChange('audioUrl', e.target.value)}
+              placeholder="https://example.com/audio.mp3"
+              helperText="支援 mp3、wav、ogg 等音頻格式"
+            />
+
+            {questionForm.audioUrl && (
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  音頻播放器：
+                </Typography>
+                <audio 
+                  controls 
+                  style={{ width: '100%', marginTop: '8px' }}
+                  src={questionForm.audioUrl}
+                >
+                  您的瀏覽器不支援音頻播放
+                </audio>
+              </Box>
+            )}
+
+            <TextField
+              fullWidth
+              label="影片網址（可選）"
+              value={questionForm.videoUrl}
+              onChange={(e) => handleQuestionChange('videoUrl', e.target.value)}
+              placeholder="https://example.com/video.mp4"
+              helperText="支援 mp4、webm、ogg 等影片格式，或 YouTube 網址"
+            />
+
+            {questionForm.videoUrl && (
+              <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
+                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                  影片預覽：
+                </Typography>
+                {questionForm.videoUrl.includes('youtube.com') || questionForm.videoUrl.includes('youtu.be') ? (
+                  <Box
+                    component="iframe"
+                    src={questionForm.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                    sx={{
+                      width: '100%',
+                      height: 200,
+                      borderRadius: 1,
+                      mt: 1,
+                      border: 'none'
+                    }}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : (
+                  <video 
+                    controls 
+                    style={{ width: '100%', maxHeight: '200px', marginTop: '8px', borderRadius: '4px' }}
+                    src={questionForm.videoUrl}
+                  >
+                    您的瀏覽器不支援影片播放
+                  </video>
+                )}
               </Box>
             )}
 
@@ -780,14 +864,29 @@ function CustomQuestionDialog({
                               <Typography variant="body2">
                                 {question.question}
                               </Typography>
-                              {question.imageUrl && (
-                                <Chip 
-                                  label="含圖片" 
-                                  size="small" 
-                                  sx={{ mt: 1 }}
-                                  color="info"
-                                />
-                              )}
+                              <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+                                {question.imageUrl && (
+                                  <Chip 
+                                    label="含圖片" 
+                                    size="small"
+                                    color="info"
+                                  />
+                                )}
+                                {question.audioUrl && (
+                                  <Chip 
+                                    label="含音頻" 
+                                    size="small"
+                                    color="success"
+                                  />
+                                )}
+                                {question.videoUrl && (
+                                  <Chip 
+                                    label="含影片" 
+                                    size="small"
+                                    color="warning"
+                                  />
+                                )}
+                              </Box>
                             </Box>
                             <Box>
                               <IconButton
@@ -944,7 +1043,9 @@ function CustomQuestionDialog({
                 <br />• categories 必須包含 id, name, nameEn, color
                 <br />• questions 必須按類別名稱分組
                 <br />• 每個題目必須包含 id, points, question, options, correctAnswer, timeLimit
-                <br />• imageUrl 和 explanation 是可選欄位
+                <br />• imageUrl、audioUrl、videoUrl 和 explanation 是可選欄位
+                <br />• audioUrl 支援 mp3、wav、ogg 等音頻格式
+                <br />• videoUrl 支援 mp4、webm 等影片格式，或 YouTube 網址
               </Typography>
             </Box>
           </Stack>
