@@ -193,6 +193,28 @@ export default function QuestionDialog({
               >
                 {question.question.replace(/\\n/g, '\n')}
               </Typography>
+              
+              {/* 顯示圖片 */}
+              {question.imageUrl && (
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  mb: 4 
+                }}>
+                  <Box
+                    component="img"
+                    src={question.imageUrl}
+                    alt="題目圖片"
+                    sx={{
+                      maxWidth: '100%',
+                      maxHeight: '400px',
+                      borderRadius: 2,
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                      objectFit: 'contain'
+                    }}
+                  />
+                </Box>
+              )}
               <Grid 
                 container 
                 spacing={4} 
