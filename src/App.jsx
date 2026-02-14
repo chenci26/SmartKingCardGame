@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react'
 import { Box, Container, Grid, Paper, Typography, Zoom, Slide, Button, IconButton, Fade } from '@mui/material'
 import { styled, keyframes } from '@mui/material/styles'
 import UndoIcon from '@mui/icons-material/Undo';
+import AddIcon from '@mui/icons-material/Add';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import categories from './data/categories'
-import questions, { pointValues } from './data/questions'
+import questions from './data/questions'
 import QuestionDialog from './components/QuestionDialog'
+import CustomQuestionDialog from './components/CustomQuestionDialog'
 import brainIcon from './assets/img/brain.png'
 import ScoreBoard from './components/ScoreBoard'
 import ScoreBoardDialog from './components/ScoreBoardDialog'
@@ -175,16 +178,40 @@ function App() {
   const [titleText, setTitleText] = useState(fullTitle);
   const [isScrolled, setIsScrolled] = useState(false);
   const [scoreBoardOpen, setScoreBoardOpen] = useState(false);
+  const [customDialogOpen, setCustomDialogOpen] = useState(false);
   const [teams, setTeams] = useState(() => {
     const savedTeams = localStorage.getItem('scoreboardTeams');
     return savedTeams ? JSON.parse(savedTeams) : [];
   });
   
+  // 自定義類別和題目
+  const [customCategories, setCustomCategories] = useState(() => {
+    const saved = localStorage.getItem('customCategories');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [customQuestions, setCustomQuestions] = useState(() => {
+    const saved = localStorage.getItem('customQuestions');
+    return saved ? JSON.parse(saved) : {};
+  });
+  
+  // 題庫切換狀態 (true: 自定義題庫, false: 預設題庫)
+  const [useCustomQuestionBank, setUseCustomQuestionBank] = useState(() => {
+    const saved = localStorage.getItem('useCustomQuestionBank');
+    return saved ? JSON.parse(saved) : false;
+  });
+  
+  // 檢查是否有自定義數據
+  const hasCustomData = customCategories.length > 0 || Object.keys(customQuestions).length > 0;
+  
+  // 根據切換狀態決定使用哪個題庫
+  const allCategories = useCustomQuestionBank && hasCustomData ? customCategories : categories;
+  const allQuestions = useCustomQuestionBank && hasCustomData ? customQuestions : questions;
+  
   useEffect(() => {
-    // 等待动画完成后消失
+    // 等待動畫完成後消失
     const timer = setTimeout(() => {
       setShowTitle(false);
-    }, 1500); // 0.8s动画 + 0.7s等待
+    }, 1500); // 0.8s動畫 + 0.7s等待
 
     return () => clearTimeout(timer);
   }, []);
@@ -212,6 +239,21 @@ function App() {
     }
   }, [scoreBoardOpen]);
 
+  // 保存自定義類別到 localStorage
+  useEffect(() => {
+    localStorage.setItem('customCategories', JSON.stringify(customCategories));
+  }, [customCategories]);
+
+  // 保存自定義題目到 localStorage
+  useEffect(() => {
+    localStorage.setItem('customQuestions', JSON.stringify(customQuestions));
+  }, [customQuestions]);
+
+  // 保存題庫切換狀態到 localStorage
+  useEffect(() => {
+    localStorage.setItem('useCustomQuestionBank', JSON.stringify(useCustomQuestionBank));
+  }, [useCustomQuestionBank]);
+
   const handlePointClick = (category, points) => {
     // Don't open if already answered
     if (isQuestionAnswered(category, points)) {
@@ -220,7 +262,7 @@ function App() {
     
     setSelectedCategory(category);
     // Get questions for this category and points
-    const categoryQuestions = questions[category.name] || [];
+    const categoryQuestions = allQuestions[category.name] || [];
     const pointQuestion = categoryQuestions.find(q => q.points === points);
     if (pointQuestion) {
       setCurrentQuestion(pointQuestion);
@@ -253,12 +295,120 @@ function App() {
     return answeredQuestions.has(`${category.name}-${points}`);
   };
 
+  // 獲取指定類別的所有分數值（已排序）
+  const getCategoryPoints = (categoryName) => {
+    const categoryQuestions = allQuestions[categoryName] || [];
+    const points = categoryQuestions.map(q => q.points);
+    // 去重並排序
+    return [...new Set(points)].sort((a, b) => a - b);
+  };
+
   const handleScoreBoardOpen = () => {
     setScoreBoardOpen(true);
   };
 
   const handleScoreBoardClose = () => {
     setScoreBoardOpen(false);
+  };
+
+  const handleCustomDialogOpen = () => {
+    setCustomDialogOpen(true);
+  };
+
+  const handleCustomDialogClose = () => {
+    setCustomDialogOpen(false);
+  };
+
+  const handleToggleQuestionBank = () => {
+    if (!hasCustomData && !useCustomQuestionBank) {
+      alert('尚未添加自定義題庫，請先添加自定義題目！');
+      return;
+    }
+    setUseCustomQuestionBank(prev => !prev);
+  };
+
+  const handleSaveCustomData = (type, data) => {
+    if (type === 'category') {
+      // 添加新類別
+      setCustomCategories(prev => [...prev, data]);
+      // 初始化該類別的題目數組
+      setCustomQuestions(prev => ({
+        ...prev,
+        [data.name]: prev[data.name] || []
+      }));
+    } else if (type === 'question') {
+      // 添加新題目到指定類別
+      setCustomQuestions(prev => {
+        const categoryQuestions = prev[data.categoryName] || [];
+        return {
+          ...prev,
+          [data.categoryName]: [...categoryQuestions, data.question]
+        };
+      });
+    }
+  };
+
+  const handleDeleteCustomData = (type, data) => {
+    if (type === 'category') {
+      // 刪除類別
+      setCustomCategories(prev => prev.filter(cat => cat.id !== data));
+      // 同時刪除該類別下的所有題目
+      setCustomQuestions(prev => {
+        const category = customCategories.find(cat => cat.id === data);
+        if (category) {
+          const { [category.name]: _, ...rest } = prev;
+          return rest;
+        }
+        return prev;
+      });
+    } else if (type === 'question') {
+      // 刪除題目
+      setCustomQuestions(prev => {
+        const categoryQuestions = prev[data.categoryName] || [];
+        return {
+          ...prev,
+          [data.categoryName]: categoryQuestions.filter(q => q.id !== data.questionId)
+        };
+      });
+    }
+  };
+
+  const handleEditCustomData = (type, data) => {
+    if (type === 'category') {
+      // 編輯類別
+      setCustomCategories(prev => 
+        prev.map(cat => cat.id === data.id ? data : cat)
+      );
+      // 如果類別名稱改變了，需要更新 questions 中的鍵
+      const oldCategory = customCategories.find(cat => cat.id === data.id);
+      if (oldCategory && oldCategory.name !== data.name) {
+        setCustomQuestions(prev => {
+          const questions = prev[oldCategory.name] || [];
+          const { [oldCategory.name]: _, ...rest } = prev;
+          return {
+            ...rest,
+            [data.name]: questions
+          };
+        });
+      }
+    } else if (type === 'question') {
+      // 編輯題目
+      setCustomQuestions(prev => {
+        const categoryQuestions = prev[data.categoryName] || [];
+        return {
+          ...prev,
+          [data.categoryName]: categoryQuestions.map(q => 
+            q.id === data.question.id ? data.question : q
+          )
+        };
+      });
+    }
+  };
+
+  const handleImportJSON = (jsonData) => {
+    // 導入 JSON 數據
+    setCustomCategories(jsonData.categories);
+    setCustomQuestions(jsonData.questions);
   };
 
   return (
@@ -381,7 +531,7 @@ function App() {
             justifyContent: 'center'
           }}
         >
-          {Object.entries(questions).map(([categoryName, categoryQuestions]) => (
+          {Object.entries(allQuestions).map(([categoryName, categoryQuestions]) => (
             <Grid 
               item 
               xs={12}
@@ -395,7 +545,7 @@ function App() {
                 flexDirection: 'column',
               }}
             >
-              <CategoryCard color={categories.find(c => c.name === categoryName)?.color || '#1a237e'}>
+              <CategoryCard color={allCategories.find(c => c.name === categoryName)?.color || '#1a237e'}>
                 <Box>
                   <Typography 
                     variant="h2" 
@@ -430,19 +580,19 @@ function App() {
                       mb: { xs: 1, sm: 1.5, md: 2 }
                     }}
                   >
-                    {categories.find(c => c.name === categoryName)?.nameEn || categoryName}
+                    {allCategories.find(c => c.name === categoryName)?.nameEn || categoryName}
                   </Typography>
                 </Box>
                 <Box sx={{ 
                   display: 'flex', 
                   gap: { xs: '4px', sm: '6px', md: '8px' },
                   justifyContent: 'center',
-                  flexWrap: 'nowrap',
+                  flexWrap: 'wrap',
                   mb: { xs: 1, sm: 1.5, md: 2 },
                   width: '100%',
                   px: { xs: 0.5, sm: 1, md: 1.5 }
                 }}>
-                  {pointValues.map((points) => (
+                  {getCategoryPoints(categoryName).map((points) => (
                     <PointButton
                       key={points}
                       answered={isQuestionAnswered({ name: categoryName }, points)}
@@ -473,6 +623,53 @@ function App() {
         </Grid>
       </Box>
 
+      {/* 切換題庫按鈕 */}
+      <Box sx={{ 
+        position: 'fixed',
+        bottom: { xs: 144, sm: 156, md: 168 },
+        right: { xs: 16, sm: 24, md: 32 },
+        zIndex: 1000
+      }}>
+        <ExpandingButton
+          onClick={handleToggleQuestionBank}
+          variant="contained"
+          sx={{
+            backgroundColor: useCustomQuestionBank ? '#FF9800' : '#4CAF50',
+            '&:hover': {
+              backgroundColor: useCustomQuestionBank ? '#F57C00' : '#388E3C',
+            }
+          }}
+        >
+          <SwapHorizIcon />
+          <span className="button-text">
+            {useCustomQuestionBank ? '切換為預設題庫' : '切換為自定義題庫'}
+          </span>
+        </ExpandingButton>
+      </Box>
+
+      {/* 自定義題目按鈕 */}
+      <Box sx={{ 
+        position: 'fixed',
+        bottom: { xs: 80, sm: 90, md: 100 },
+        right: { xs: 16, sm: 24, md: 32 },
+        zIndex: 1000
+      }}>
+        <ExpandingButton
+          onClick={handleCustomDialogOpen}
+          variant="contained"
+          sx={{
+            backgroundColor: '#2196F3',
+            '&:hover': {
+              backgroundColor: '#1976D2',
+            }
+          }}
+        >
+          <AddIcon />
+          <span className="button-text">自定義題目</span>
+        </ExpandingButton>
+      </Box>
+
+      {/* 重置按鈕 */}
       <Box sx={{ 
         position: 'fixed',
         bottom: { xs: 16, sm: 24, md: 32 },
@@ -502,6 +699,19 @@ function App() {
       <ScoreBoardDialog
         open={scoreBoardOpen}
         onClose={handleScoreBoardClose}
+      />
+
+      {/* 自定義題目對話框 */}
+      <CustomQuestionDialog
+        open={customDialogOpen}
+        onClose={handleCustomDialogClose}
+        onSave={handleSaveCustomData}
+        onDelete={handleDeleteCustomData}
+        onEdit={handleEditCustomData}
+        onImportJSON={handleImportJSON}
+        existingCategories={allCategories}
+        customCategories={customCategories}
+        customQuestions={customQuestions}
       />
     </Container>
   )
