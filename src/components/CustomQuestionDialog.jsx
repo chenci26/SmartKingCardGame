@@ -84,6 +84,33 @@ function CustomQuestionDialog({
   const [jsonError, setJsonError] = useState('');
   const [uploadedFileName, setUploadedFileName] = useState('');
 
+  // Google Drive 鏈接轉換函數
+  const convertGoogleDriveUrl = (url) => {
+    if (!url) return url;
+    
+    // 檢測各種 Google Drive 鏈接格式
+    const patterns = [
+      /drive\.google\.com\/file\/d\/([^\/]+)/,
+      /drive\.google\.com\/open\?id=([^&]+)/,
+      /drive\.google\.com\/uc\?id=([^&]+)/,
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        const fileId = match[1];
+        // 轉換為預覽鏈接
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+      }
+    }
+    
+    return url;
+  };
+
+  const isGoogleDriveUrl = (url) => {
+    return url && url.includes('drive.google.com');
+  };
+
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -636,8 +663,8 @@ function CustomQuestionDialog({
               label="圖片網址（可選）"
               value={questionForm.imageUrl}
               onChange={(e) => handleQuestionChange('imageUrl', e.target.value)}
-              placeholder="https://example.com/image.jpg"
-              helperText="如果題目需要顯示圖片，請輸入圖片網址"
+              placeholder="https://example.com/image.jpg 或 Google Drive 分享鏈接"
+              helperText="支援一般圖片網址或 Google Drive 分享鏈接"
             />
 
             {questionForm.imageUrl && (
@@ -645,24 +672,40 @@ function CustomQuestionDialog({
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   圖片預覽：
                 </Typography>
-                <Box
-                  component="img"
-                  src={questionForm.imageUrl}
-                  alt="預覽"
-                  sx={{
-                    maxWidth: '100%',
-                    maxHeight: 200,
-                    borderRadius: 1,
-                    mt: 1
-                  }}
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'block';
-                  }}
-                />
-                <Typography variant="caption" color="error" sx={{ display: 'none' }}>
-                  無法載入圖片，請檢查網址是否正確
-                </Typography>
+                {isGoogleDriveUrl(questionForm.imageUrl) ? (
+                  <Box
+                    component="iframe"
+                    src={convertGoogleDriveUrl(questionForm.imageUrl)}
+                    sx={{
+                      width: '100%',
+                      height: 200,
+                      borderRadius: 1,
+                      mt: 1,
+                      border: 'none'
+                    }}
+                  />
+                ) : (
+                  <>
+                    <Box
+                      component="img"
+                      src={questionForm.imageUrl}
+                      alt="預覽"
+                      sx={{
+                        maxWidth: '100%',
+                        maxHeight: 200,
+                        borderRadius: 1,
+                        mt: 1
+                      }}
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'block';
+                      }}
+                    />
+                    <Typography variant="caption" color="error" sx={{ display: 'none' }}>
+                      無法載入圖片，請檢查網址是否正確
+                    </Typography>
+                  </>
+                )}
               </Box>
             )}
 
@@ -671,8 +714,8 @@ function CustomQuestionDialog({
               label="音頻網址（可選）"
               value={questionForm.audioUrl}
               onChange={(e) => handleQuestionChange('audioUrl', e.target.value)}
-              placeholder="https://example.com/audio.mp3"
-              helperText="支援 mp3、wav、ogg 等音頻格式"
+              placeholder="https://example.com/audio.mp3 或 Google Drive 分享鏈接"
+              helperText="支援 mp3、wav、ogg 等音頻格式，或 Google Drive 分享鏈接"
             />
 
             {questionForm.audioUrl && (
@@ -680,13 +723,27 @@ function CustomQuestionDialog({
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   音頻播放器：
                 </Typography>
-                <audio 
-                  controls 
-                  style={{ width: '100%', marginTop: '8px' }}
-                  src={questionForm.audioUrl}
-                >
-                  您的瀏覽器不支援音頻播放
-                </audio>
+                {isGoogleDriveUrl(questionForm.audioUrl) ? (
+                  <Box
+                    component="iframe"
+                    src={convertGoogleDriveUrl(questionForm.audioUrl)}
+                    sx={{
+                      width: '100%',
+                      height: 100,
+                      borderRadius: 1,
+                      mt: 1,
+                      border: 'none'
+                    }}
+                  />
+                ) : (
+                  <audio 
+                    controls 
+                    style={{ width: '100%', marginTop: '8px' }}
+                    src={questionForm.audioUrl}
+                  >
+                    您的瀏覽器不支援音頻播放
+                  </audio>
+                )}
               </Box>
             )}
 
@@ -695,8 +752,8 @@ function CustomQuestionDialog({
               label="影片網址（可選）"
               value={questionForm.videoUrl}
               onChange={(e) => handleQuestionChange('videoUrl', e.target.value)}
-              placeholder="https://example.com/video.mp4"
-              helperText="支援 mp4、webm、ogg 等影片格式，或 YouTube 網址"
+              placeholder="https://example.com/video.mp4 或 YouTube/Google Drive 分享鏈接"
+              helperText="支援 mp4、webm 等格式、YouTube 網址或 Google Drive 分享鏈接"
             />
 
             {questionForm.videoUrl && (
@@ -704,7 +761,21 @@ function CustomQuestionDialog({
                 <Typography variant="subtitle2" color="text.secondary" gutterBottom>
                   影片預覽：
                 </Typography>
-                {questionForm.videoUrl.includes('youtube.com') || questionForm.videoUrl.includes('youtu.be') ? (
+                {isGoogleDriveUrl(questionForm.videoUrl) ? (
+                  <Box
+                    component="iframe"
+                    src={convertGoogleDriveUrl(questionForm.videoUrl)}
+                    sx={{
+                      width: '100%',
+                      height: 200,
+                      borderRadius: 1,
+                      mt: 1,
+                      border: 'none'
+                    }}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                ) : questionForm.videoUrl.includes('youtube.com') || questionForm.videoUrl.includes('youtu.be') ? (
                   <Box
                     component="iframe"
                     src={questionForm.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
@@ -1044,8 +1115,9 @@ function CustomQuestionDialog({
                 <br />• questions 必須按類別名稱分組
                 <br />• 每個題目必須包含 id, points, question, options, correctAnswer, timeLimit
                 <br />• imageUrl、audioUrl、videoUrl 和 explanation 是可選欄位
-                <br />• audioUrl 支援 mp3、wav、ogg 等音頻格式
-                <br />• videoUrl 支援 mp4、webm 等影片格式，或 YouTube 網址
+                <br />• 支援一般圖片/音頻/影片網址
+                <br />• 支援 YouTube 網址（自動轉換為嵌入播放器）
+                <br />• 支援 Google Drive 分享鏈接（自動轉換為嵌入預覽）
               </Typography>
             </Box>
           </Stack>
