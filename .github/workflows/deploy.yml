@@ -3,28 +3,19 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 當推送到 main 分支時觸發
-  pull_request:
-    types: [closed]
-    branches:
-      - main  # 當 PR 合併到 main 時觸發
-
-  # 允許手動觸發
+      - main
   workflow_dispatch:
 
-# 設置 GITHUB_TOKEN 的權限
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 只允許一個部署同時進行
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  # 構建任務
   build:
     runs-on: ubuntu-latest
     steps:
@@ -42,9 +33,6 @@ jobs:
 
       - name: Build
         run: npm run build
-        env:
-          # 自動使用倉庫名稱作為 base path
-          NODE_ENV: production
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -54,7 +42,6 @@ jobs:
         with:
           path: './dist'
 
-  # 部署任務
   deploy:
     environment:
       name: github-pages

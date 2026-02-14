@@ -3,7 +3,8 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
-  const base = command === 'build' ? '/SmartKing/' : '/'
+  // GitHub Pages 部署路径
+  const base = command === 'build' ? '/SmartKingCardGame/' : '/'
   
   return {
     plugins: [react()],
@@ -14,9 +15,7 @@ export default defineConfig(({ command }) => {
     build: {
       outDir: 'dist',
       assetsDir: 'assets',
-      // 生成 source map 以便調試
-      sourcemap: false,
-      // 優化構建
+      // 优化构建
       rollupOptions: {
         output: {
           manualChunks: {
@@ -27,4 +26,4 @@ export default defineConfig(({ command }) => {
       }
     }
   }
-}) 
+})
