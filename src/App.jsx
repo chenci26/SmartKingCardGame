@@ -166,7 +166,7 @@ const ExpandingButton = styled(Button)(({ theme }) => ({
 }));
 
 function App() {
-  const fullTitle = "智慧王遊戲";
+  const fullTitle = "腦洞星期五";
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [answeredQuestions, setAnsweredQuestions] = useState(() => {
