@@ -215,6 +215,70 @@ export default function QuestionDialog({
                   />
                 </Box>
               )}
+
+              {/* 顯示音頻播放器 */}
+              {question.audioUrl && (
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  mb: 4 
+                }}>
+                  <Box sx={{ width: '100%', maxWidth: '600px' }}>
+                    <audio 
+                      controls 
+                      style={{ 
+                        width: '100%',
+                        borderRadius: '8px',
+                        backgroundColor: 'white',
+                        padding: '8px'
+                      }}
+                      src={question.audioUrl}
+                    >
+                      您的瀏覽器不支援音頻播放
+                    </audio>
+                  </Box>
+                </Box>
+              )}
+
+              {/* 顯示影片播放器 */}
+              {question.videoUrl && (
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  mb: 4 
+                }}>
+                  {question.videoUrl.includes('youtube.com') || question.videoUrl.includes('youtu.be') ? (
+                    <Box
+                      component="iframe"
+                      src={question.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                      sx={{
+                        width: '100%',
+                        maxWidth: '800px',
+                        height: '400px',
+                        borderRadius: 2,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                        border: 'none'
+                      }}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <video 
+                      controls 
+                      style={{ 
+                        width: '100%',
+                        maxWidth: '800px',
+                        maxHeight: '400px',
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                      }}
+                      src={question.videoUrl}
+                    >
+                      您的瀏覽器不支援影片播放
+                    </video>
+                  )}
+                </Box>
+              )}
               <Grid 
                 container 
                 spacing={4} 
