@@ -67,6 +67,31 @@ export default function QuestionDialog({
   const [openConfirm, setOpenConfirm] = useState(false);
   const [timeLeft, setTimeLeft] = useState(question?.timeLimit || 0);
 
+  // Google Drive 鏈接轉換函數
+  const convertGoogleDriveUrl = (url) => {
+    if (!url) return url;
+    
+    const patterns = [
+      /drive\.google\.com\/file\/d\/([^\/]+)/,
+      /drive\.google\.com\/open\?id=([^&]+)/,
+      /drive\.google\.com\/uc\?id=([^&]+)/,
+    ];
+    
+    for (const pattern of patterns) {
+      const match = url.match(pattern);
+      if (match) {
+        const fileId = match[1];
+        return `https://drive.google.com/file/d/${fileId}/preview`;
+      }
+    }
+    
+    return url;
+  };
+
+  const isGoogleDriveUrl = (url) => {
+    return url && url.includes('drive.google.com');
+  };
+
   const handleShowAnswer = () => {
     setOpenConfirm(true);
   };
@@ -201,18 +226,33 @@ export default function QuestionDialog({
                   justifyContent: 'center', 
                   mb: 4 
                 }}>
-                  <Box
-                    component="img"
-                    src={question.imageUrl}
-                    alt="題目圖片"
-                    sx={{
-                      maxWidth: '100%',
-                      maxHeight: '400px',
-                      borderRadius: 2,
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                      objectFit: 'contain'
-                    }}
-                  />
+                  {isGoogleDriveUrl(question.imageUrl) ? (
+                    <Box
+                      component="iframe"
+                      src={convertGoogleDriveUrl(question.imageUrl)}
+                      sx={{
+                        width: '100%',
+                        maxWidth: '800px',
+                        height: '400px',
+                        borderRadius: 2,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                        border: 'none'
+                      }}
+                    />
+                  ) : (
+                    <Box
+                      component="img"
+                      src={question.imageUrl}
+                      alt="題目圖片"
+                      sx={{
+                        maxWidth: '100%',
+                        maxHeight: '400px',
+                        borderRadius: 2,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  )}
                 </Box>
               )}
 
@@ -224,18 +264,32 @@ export default function QuestionDialog({
                   mb: 4 
                 }}>
                   <Box sx={{ width: '100%', maxWidth: '600px' }}>
-                    <audio 
-                      controls 
-                      style={{ 
-                        width: '100%',
-                        borderRadius: '8px',
-                        backgroundColor: 'white',
-                        padding: '8px'
-                      }}
-                      src={question.audioUrl}
-                    >
-                      您的瀏覽器不支援音頻播放
-                    </audio>
+                    {isGoogleDriveUrl(question.audioUrl) ? (
+                      <Box
+                        component="iframe"
+                        src={convertGoogleDriveUrl(question.audioUrl)}
+                        sx={{
+                          width: '100%',
+                          height: '100px',
+                          borderRadius: 1,
+                          border: 'none',
+                          backgroundColor: 'white'
+                        }}
+                      />
+                    ) : (
+                      <audio 
+                        controls 
+                        style={{ 
+                          width: '100%',
+                          borderRadius: '8px',
+                          backgroundColor: 'white',
+                          padding: '8px'
+                        }}
+                        src={question.audioUrl}
+                      >
+                        您的瀏覽器不支援音頻播放
+                      </audio>
+                    )}
                   </Box>
                 </Box>
               )}
@@ -247,7 +301,22 @@ export default function QuestionDialog({
                   justifyContent: 'center', 
                   mb: 4 
                 }}>
-                  {question.videoUrl.includes('youtube.com') || question.videoUrl.includes('youtu.be') ? (
+                  {isGoogleDriveUrl(question.videoUrl) ? (
+                    <Box
+                      component="iframe"
+                      src={convertGoogleDriveUrl(question.videoUrl)}
+                      sx={{
+                        width: '100%',
+                        maxWidth: '800px',
+                        height: '400px',
+                        borderRadius: 2,
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
+                        border: 'none'
+                      }}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : question.videoUrl.includes('youtube.com') || question.videoUrl.includes('youtu.be') ? (
                     <Box
                       component="iframe"
                       src={question.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
