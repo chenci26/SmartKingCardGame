@@ -34,6 +34,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DownloadIcon from '@mui/icons-material/Download';
 import { HexColorPicker } from 'react-colorful';
+import ImageCarousel from './ImageCarousel';
 
 function TabPanel({ children, value, index }) {
   return (
@@ -717,56 +718,78 @@ function CustomQuestionDialog({
               placeholder="輸入你的問題..."
             />
 
-            <TextField
-              fullWidth
-              label="圖片網址（可選）"
-              value={questionForm.imageUrl}
-              onChange={(e) => handleQuestionChange('imageUrl', e.target.value)}
-              placeholder="https://example.com/image.jpg 或 Google Drive 分享鏈接"
-              helperText="支援一般圖片網址或 Google Drive 分享鏈接"
-            />
-
-            {questionForm.imageUrl && (
-              <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
-                <Typography variant="subtitle2" color="#000000" gutterBottom>
-                  圖片預覽：
+            <Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                <Typography variant="subtitle1">
+                  題目圖片（可選，支持多張）
                 </Typography>
-                {isGoogleDriveUrl(questionForm.imageUrl) ? (
-                  <Box
-                    component="iframe"
-                    src={convertGoogleDriveUrl(questionForm.imageUrl)}
-                    sx={{
-                      width: '100%',
-                      height: 200,
-                      borderRadius: 1,
-                      mt: 1,
-                      border: 'none'
-                    }}
-                  />
-                ) : (
-                  <>
-                    <Box
-                      component="img"
-                      src={questionForm.imageUrl}
-                      alt="預覽"
-                      sx={{
-                        maxWidth: '100%',
-                        maxHeight: 200,
-                        borderRadius: 1,
-                        mt: 1
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.nextSibling.style.display = 'block';
-                      }}
-                    />
-                    <Typography variant="caption" color="error" sx={{ display: 'none' }}>
-                      無法載入圖片，請檢查網址是否正確
-                    </Typography>
-                  </>
-                )}
+                <Button
+                  size="small"
+                  startIcon={<AddIcon />}
+                  onClick={() => {
+                    const currentUrls = Array.isArray(questionForm.imageUrl) 
+                      ? questionForm.imageUrl 
+                      : questionForm.imageUrl ? [questionForm.imageUrl] : [];
+                    handleQuestionChange('imageUrl', [...currentUrls, '']);
+                  }}
+                >
+                  添加圖片
+                </Button>
               </Box>
-            )}
+              
+              {(() => {
+                const imageUrls = Array.isArray(questionForm.imageUrl) 
+                  ? questionForm.imageUrl 
+                  : questionForm.imageUrl ? [questionForm.imageUrl] : [];
+                
+                return (
+                  <>
+                    {imageUrls.map((url, urlIndex) => (
+                      <Box key={urlIndex} sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                        <TextField
+                          fullWidth
+                          value={url}
+                          onChange={(e) => {
+                            const newUrls = [...imageUrls];
+                            newUrls[urlIndex] = e.target.value;
+                            handleQuestionChange('imageUrl', newUrls.length === 1 ? newUrls[0] : newUrls);
+                          }}
+                          placeholder={`圖片 ${urlIndex + 1} - https://example.com/image.jpg 或 Google Drive 分享鏈接`}
+                          helperText={urlIndex === 0 ? "支援一般圖片網址或 Google Drive 分享鏈接" : ""}
+                        />
+                        {imageUrls.length > 1 && (
+                          <IconButton
+                            color="error"
+                            onClick={() => {
+                              const newUrls = imageUrls.filter((_, i) => i !== urlIndex);
+                              handleQuestionChange('imageUrl', newUrls.length === 1 ? newUrls[0] : newUrls.length === 0 ? '' : newUrls);
+                            }}
+                            sx={{ mt: urlIndex === 0 ? 0 : 1 }}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        )}
+                      </Box>
+                    ))}
+                  </>
+                );
+              })()}
+              
+              {questionForm.imageUrl && (
+                <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1, mt: 2 }}>
+                  <Typography variant="subtitle2" color="#000000" gutterBottom>
+                    圖片預覽：
+                  </Typography>
+                  <ImageCarousel
+                    images={questionForm.imageUrl}
+                    isGoogleDriveUrl={isGoogleDriveUrl}
+                    convertGoogleDriveUrl={convertGoogleDriveUrl}
+                    maxHeight="200px"
+                    maxWidth="100%"
+                  />
+                </Box>
+              )}
+            </Box>
 
             <TextField
               fullWidth
@@ -904,36 +927,75 @@ function CustomQuestionDialog({
                         placeholder={`選項 ${String.fromCharCode(65 + index)}`}
                       />
                       
-                      <TextField
-                        fullWidth
-                        size="small"
-                        label="圖片網址（可選）"
-                        value={optionObj.imageUrl || ''}
-                        onChange={(e) => handleOptionChange(index, 'imageUrl', e.target.value)}
-                        placeholder="https://example.com/image.jpg 或 Google Drive 分享鏈接"
-                      />
-                      {optionObj.imageUrl && (
-                        <Box sx={{ p: 1, bgcolor: 'white', borderRadius: 1 }}>
-                          {isGoogleDriveUrl(optionObj.imageUrl) ? (
-                            <Box
-                              component="iframe"
-                              src={convertGoogleDriveUrl(optionObj.imageUrl)}
-                              sx={{
-                                width: '100%',
-                                height: 150,
-                                borderRadius: 1,
-                                border: 'none'
-                              }}
-                            />
-                          ) : (
-                            <img 
-                              src={optionObj.imageUrl} 
-                              alt={`選項 ${String.fromCharCode(65 + index)}`}
-                              style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '4px' }}
-                            />
-                          )}
+                      <Box>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                          <Typography variant="caption" color="text.secondary">
+                            圖片網址（可選，支持多張）
+                          </Typography>
+                          <Button
+                            size="small"
+                            startIcon={<AddIcon />}
+                            onClick={() => {
+                              const currentUrls = Array.isArray(optionObj.imageUrl) 
+                                ? optionObj.imageUrl 
+                                : optionObj.imageUrl ? [optionObj.imageUrl] : [];
+                              handleOptionChange(index, 'imageUrl', [...currentUrls, '']);
+                            }}
+                          >
+                            添加圖片
+                          </Button>
                         </Box>
-                      )}
+                        
+                        {(() => {
+                          const imageUrls = Array.isArray(optionObj.imageUrl) 
+                            ? optionObj.imageUrl 
+                            : optionObj.imageUrl ? [optionObj.imageUrl] : [];
+                          
+                          return (
+                            <>
+                              {imageUrls.map((url, urlIndex) => (
+                                <Box key={urlIndex} sx={{ display: 'flex', gap: 1, mb: 1 }}>
+                                  <TextField
+                                    fullWidth
+                                    size="small"
+                                    value={url}
+                                    onChange={(e) => {
+                                      const newUrls = [...imageUrls];
+                                      newUrls[urlIndex] = e.target.value;
+                                      handleOptionChange(index, 'imageUrl', newUrls.length === 1 ? newUrls[0] : newUrls);
+                                    }}
+                                    placeholder={`圖片 ${urlIndex + 1} - https://example.com/image.jpg 或 Google Drive`}
+                                  />
+                                  {imageUrls.length > 1 && (
+                                    <IconButton
+                                      size="small"
+                                      color="error"
+                                      onClick={() => {
+                                        const newUrls = imageUrls.filter((_, i) => i !== urlIndex);
+                                        handleOptionChange(index, 'imageUrl', newUrls.length === 1 ? newUrls[0] : newUrls.length === 0 ? '' : newUrls);
+                                      }}
+                                    >
+                                      <DeleteIcon fontSize="small" />
+                                    </IconButton>
+                                  )}
+                                </Box>
+                              ))}
+                            </>
+                          );
+                        })()}
+                        
+                        {optionObj.imageUrl && (
+                          <Box sx={{ p: 1, bgcolor: 'white', borderRadius: 1, mt: 1 }}>
+                            <ImageCarousel
+                              images={optionObj.imageUrl}
+                              isGoogleDriveUrl={isGoogleDriveUrl}
+                              convertGoogleDriveUrl={convertGoogleDriveUrl}
+                              maxHeight="150px"
+                              maxWidth="100%"
+                            />
+                          </Box>
+                        )}
+                      </Box>
                       
                       <TextField
                         fullWidth
