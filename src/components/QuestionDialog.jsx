@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Timer from './Timer';
+import ImageCarousel from './ImageCarousel';
 
 const OptionButton = styled(Button, {
   shouldForwardProp: (prop) => prop !== 'isCorrect'
@@ -229,35 +230,19 @@ export default function QuestionDialog({
                 <Box sx={{ 
                   display: 'flex', 
                   justifyContent: 'center', 
-                  mb: 4 
+                  mb: 4,
+                  '& > div': {
+                    maxWidth: '800px',
+                    width: '100%'
+                  }
                 }}>
-                  {isGoogleDriveUrl(question.imageUrl) ? (
-                    <Box
-                      component="iframe"
-                      src={convertGoogleDriveUrl(question.imageUrl)}
-                      sx={{
-                        width: '100%',
-                        maxWidth: '800px',
-                        height: '400px',
-                        borderRadius: 2,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                        border: 'none'
-                      }}
-                    />
-                  ) : (
-                    <Box
-                      component="img"
-                      src={question.imageUrl}
-                      alt="題目圖片"
-                      sx={{
-                        maxWidth: '100%',
-                        maxHeight: '400px',
-                        borderRadius: 2,
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                        objectFit: 'contain'
-                      }}
-                    />
-                  )}
+                  <ImageCarousel
+                    images={question.imageUrl}
+                    isGoogleDriveUrl={isGoogleDriveUrl}
+                    convertGoogleDriveUrl={convertGoogleDriveUrl}
+                    maxHeight="400px"
+                    maxWidth="800px"
+                  />
                 </Box>
               )}
 
@@ -398,33 +383,16 @@ export default function QuestionDialog({
                                   width: '100%', 
                                   display: 'flex', 
                                   justifyContent: 'center',
-                                  mt: 1
+                                  mt: 1,
+                                  mb: 2
                                 }}>
-                                  {isGoogleDriveUrl(optionObj.imageUrl) ? (
-                                    <Box
-                                      component="iframe"
-                                      src={convertGoogleDriveUrl(optionObj.imageUrl)}
-                                      sx={{
-                                        width: '100%',
-                                        maxWidth: '300px',
-                                        height: '200px',
-                                        borderRadius: '8px',
-                                        border: 'none'
-                                      }}
-                                    />
-                                  ) : (
-                                    <Box
-                                      component="img"
-                                      src={optionObj.imageUrl}
-                                      alt={optionObj.text}
-                                      sx={{
-                                        maxWidth: '100%',
-                                        maxHeight: '200px',
-                                        borderRadius: '8px',
-                                        objectFit: 'contain'
-                                      }}
-                                    />
-                                  )}
+                                  <ImageCarousel
+                                    images={optionObj.imageUrl}
+                                    isGoogleDriveUrl={isGoogleDriveUrl}
+                                    convertGoogleDriveUrl={convertGoogleDriveUrl}
+                                    maxHeight="200px"
+                                    maxWidth="300px"
+                                  />
                                 </Box>
                               )}
                               
