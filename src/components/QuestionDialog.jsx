@@ -51,7 +51,12 @@ const OptionButton = styled(Button, {
   '& .option-text': {
     transition: 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
     display: 'block',
-    width: '100%'
+    width: '100%',
+    color: 'white'
+  },
+  '& audio, & video, & iframe': {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: '8px'
   }
 }));
 
@@ -356,29 +361,148 @@ export default function QuestionDialog({
                   justifyContent: question.options.length === 1 ? 'center' : 'flex-start'
                 }}
               >
-                {question.options.map((option, index) => (
-                  <Grid 
-                    item 
-                    xs={question.options.length === 1 ? 6 : 6} 
-                    key={index} 
-                    sx={{ 
-                      display: 'flex',
-                      justifyContent: question.options.length === 1 ? 'center' : 'flex-start'
-                    }}
-                  >
-                    <Fade in={true} timeout={500 + index * 200} style={{ width: '100%' }}>
-                      <div style={{ width: '100%', height: '100%' }}>
-                        <OptionButton
-                          variant="contained"
-                          disabled={showResult}
-                          isCorrect={showResult && option === question.correctAnswer}
-                        >
-                          <span className="option-text">{option}</span>
-                        </OptionButton>
-                      </div>
-                    </Fade>
-                  </Grid>
-                ))}
+                {question.options.map((option, index) => {
+                  // 兼容旧格式（字符串）和新格式（对象）
+                  const optionObj = typeof option === 'string' 
+                    ? { text: option, imageUrl: '', audioUrl: '', videoUrl: '' } 
+                    : option;
+                  
+                  return (
+                    <Grid 
+                      item 
+                      xs={question.options.length === 1 ? 6 : 6} 
+                      key={index} 
+                      sx={{ 
+                        display: 'flex',
+                        justifyContent: question.options.length === 1 ? 'center' : 'flex-start'
+                      }}
+                    >
+                      <Fade in={true} timeout={500 + index * 200} style={{ width: '100%' }}>
+                        <div style={{ width: '100%', height: '100%' }}>
+                          <OptionButton
+                            variant="contained"
+                            disabled={showResult}
+                            isCorrect={showResult && optionObj.text === question.correctAnswer}
+                          >
+                            <Box sx={{ 
+                              display: 'flex', 
+                              flexDirection: 'column', 
+                              gap: 1.5, 
+                              width: '100%',
+                              alignItems: 'center'
+                            }}>
+                              <span className="option-text">{optionObj.text}</span>
+                              
+                              {optionObj.imageUrl && (
+                                <Box sx={{ 
+                                  width: '100%', 
+                                  display: 'flex', 
+                                  justifyContent: 'center',
+                                  mt: 1
+                                }}>
+                                  {isGoogleDriveUrl(optionObj.imageUrl) ? (
+                                    <Box
+                                      component="iframe"
+                                      src={convertGoogleDriveUrl(optionObj.imageUrl)}
+                                      sx={{
+                                        width: '100%',
+                                        maxWidth: '300px',
+                                        height: '200px',
+                                        borderRadius: '8px',
+                                        border: 'none'
+                                      }}
+                                    />
+                                  ) : (
+                                    <Box
+                                      component="img"
+                                      src={optionObj.imageUrl}
+                                      alt={optionObj.text}
+                                      sx={{
+                                        maxWidth: '100%',
+                                        maxHeight: '200px',
+                                        borderRadius: '8px',
+                                        objectFit: 'contain'
+                                      }}
+                                    />
+                                  )}
+                                </Box>
+                              )}
+                              
+                              {optionObj.audioUrl && (
+                                <Box sx={{ width: '100%', mt: 1 }}>
+                                  {isGoogleDriveUrl(optionObj.audioUrl) ? (
+                                    <audio 
+                                      controls 
+                                      style={{ width: '100%', maxWidth: '300px' }}
+                                    >
+                                      <source src={convertGoogleDriveUrl(optionObj.audioUrl)} />
+                                      您的瀏覽器不支援音頻播放
+                                    </audio>
+                                  ) : (
+                                    <audio 
+                                      controls 
+                                      style={{ width: '100%', maxWidth: '300px' }}
+                                    >
+                                      <source src={optionObj.audioUrl} />
+                                      您的瀏覽器不支援音頻播放
+                                    </audio>
+                                  )}
+                                </Box>
+                              )}
+                              
+                              {optionObj.videoUrl && (
+                                <Box sx={{ width: '100%', mt: 1 }}>
+                                  {isGoogleDriveUrl(optionObj.videoUrl) ? (
+                                    <Box
+                                      component="iframe"
+                                      src={convertGoogleDriveUrl(optionObj.videoUrl)}
+                                      sx={{
+                                        width: '100%',
+                                        maxWidth: '300px',
+                                        height: 200,
+                                        borderRadius: 1,
+                                        border: 'none'
+                                      }}
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                    />
+                                  ) : optionObj.videoUrl.includes('youtube.com') || optionObj.videoUrl.includes('youtu.be') ? (
+                                    <Box
+                                      component="iframe"
+                                      src={optionObj.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                                      sx={{
+                                        width: '100%',
+                                        maxWidth: '300px',
+                                        height: 200,
+                                        borderRadius: 1,
+                                        border: 'none'
+                                      }}
+                                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                      allowFullScreen
+                                    />
+                                  ) : (
+                                    <video 
+                                      controls 
+                                      style={{ 
+                                        width: '100%', 
+                                        maxWidth: '300px',
+                                        maxHeight: '200px', 
+                                        borderRadius: '8px' 
+                                      }}
+                                      src={optionObj.videoUrl}
+                                    >
+                                      您的瀏覽器不支援影片播放
+                                    </video>
+                                  )}
+                                </Box>
+                              )}
+                            </Box>
+                          </OptionButton>
+                        </div>
+                      </Fade>
+                    </Grid>
+                  );
+                })}
               </Grid>
             </Box>
           </Grow>

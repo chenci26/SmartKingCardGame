@@ -73,7 +73,12 @@ function CustomQuestionDialog({
     imageUrl: '',
     audioUrl: '',
     videoUrl: '',
-    options: ['(A) ', '(B) ', '(C) ', '(D) '],
+    options: [
+      { text: '(A) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+      { text: '(B) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+      { text: '(C) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+      { text: '(D) ', imageUrl: '', audioUrl: '', videoUrl: '' }
+    ],
     correctAnswer: '',
     explanation: '',
     timeLimit: 30,
@@ -190,7 +195,12 @@ function CustomQuestionDialog({
       imageUrl: '',
       audioUrl: '',
       videoUrl: '',
-      options: ['(A) ', '(B) ', '(C) ', '(D) '],
+      options: [
+        { text: '(A) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+        { text: '(B) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+        { text: '(C) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+        { text: '(D) ', imageUrl: '', audioUrl: '', videoUrl: '' }
+      ],
       correctAnswer: '',
       explanation: '',
       timeLimit: 30,
@@ -202,9 +212,18 @@ function CustomQuestionDialog({
     setQuestionForm(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleOptionChange = (index, value) => {
+  const handleOptionChange = (index, field, value) => {
     const newOptions = [...questionForm.options];
-    newOptions[index] = value;
+    if (typeof newOptions[index] === 'string') {
+      // 转换旧格式为新格式
+      newOptions[index] = {
+        text: newOptions[index],
+        imageUrl: '',
+        audioUrl: '',
+        videoUrl: ''
+      };
+    }
+    newOptions[index] = { ...newOptions[index], [field]: value };
     setQuestionForm(prev => ({ ...prev, options: newOptions }));
   };
 
@@ -212,7 +231,7 @@ function CustomQuestionDialog({
     const nextLetter = String.fromCharCode(65 + questionForm.options.length);
     setQuestionForm(prev => ({
       ...prev,
-      options: [...prev.options, `(${nextLetter}) `],
+      options: [...prev.options, { text: `(${nextLetter}) `, imageUrl: '', audioUrl: '', videoUrl: '' }],
     }));
   };
 
@@ -225,6 +244,13 @@ function CustomQuestionDialog({
 
   const handleEditQuestion = (categoryName, question) => {
     setEditingQuestion({ categoryName, question });
+    // 转换旧格式选项为新格式
+    const normalizedOptions = question.options.map(opt => {
+      if (typeof opt === 'string') {
+        return { text: opt, imageUrl: '', audioUrl: '', videoUrl: '' };
+      }
+      return opt;
+    });
     setQuestionForm({
       categoryName: categoryName,
       points: question.points,
@@ -232,7 +258,7 @@ function CustomQuestionDialog({
       imageUrl: question.imageUrl || '',
       audioUrl: question.audioUrl || '',
       videoUrl: question.videoUrl || '',
-      options: question.options,
+      options: normalizedOptions,
       correctAnswer: question.correctAnswer,
       explanation: question.explanation || '',
       timeLimit: question.timeLimit,
@@ -252,7 +278,10 @@ function CustomQuestionDialog({
       imageUrl: questionForm.imageUrl || undefined,
       audioUrl: questionForm.audioUrl || undefined,
       videoUrl: questionForm.videoUrl || undefined,
-      options: questionForm.options.filter(opt => opt.trim() !== ''),
+      options: questionForm.options.filter(opt => {
+        if (typeof opt === 'string') return opt.trim() !== '';
+        return opt.text && opt.text.trim() !== '';
+      }),
       correctAnswer: questionForm.correctAnswer,
       explanation: questionForm.explanation || undefined,
       timeLimit: parseInt(questionForm.timeLimit),
@@ -291,7 +320,12 @@ function CustomQuestionDialog({
       imageUrl: '',
       audioUrl: '',
       videoUrl: '',
-      options: ['(A) ', '(B) ', '(C) ', '(D) '],
+      options: [
+        { text: '(A) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+        { text: '(B) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+        { text: '(C) ', imageUrl: '', audioUrl: '', videoUrl: '' },
+        { text: '(D) ', imageUrl: '', audioUrl: '', videoUrl: '' }
+      ],
       correctAnswer: '',
       explanation: '',
       timeLimit: 30,
@@ -455,7 +489,32 @@ function CustomQuestionDialog({
             imageUrl: "https://example.com/image.jpg",
             audioUrl: "https://example.com/audio.mp3",
             videoUrl: "https://example.com/video.mp4",
-            options: ["(A) 亞馬遜河", "(B) 長江", "(C) 尼羅河", "(D) 密西西比河"],
+            options: [
+              {
+                text: "(A) 亞馬遜河",
+                imageUrl: "https://example.com/option-a.jpg",
+                audioUrl: "",
+                videoUrl: ""
+              },
+              {
+                text: "(B) 長江",
+                imageUrl: "",
+                audioUrl: "https://example.com/option-b.mp3",
+                videoUrl: ""
+              },
+              {
+                text: "(C) 尼羅河",
+                imageUrl: "",
+                audioUrl: "",
+                videoUrl: "https://example.com/option-c.mp4"
+              },
+              {
+                text: "(D) 密西西比河",
+                imageUrl: "",
+                audioUrl: "",
+                videoUrl: ""
+              }
+            ],
             correctAnswer: "(C) 尼羅河",
             explanation: "尼羅河長約6650公里",
             timeLimit: 30
@@ -669,7 +728,7 @@ function CustomQuestionDialog({
 
             {questionForm.imageUrl && (
               <Box sx={{ p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Typography variant="subtitle2" color="#000000" gutterBottom>
                   圖片預覽：
                 </Typography>
                 {isGoogleDriveUrl(questionForm.imageUrl) ? (
@@ -814,24 +873,149 @@ function CustomQuestionDialog({
                 </Button>
               </Box>
 
-              {questionForm.options.map((option, index) => (
-                <Box key={index} sx={{ display: 'flex', gap: 1, mb: 1 }}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    value={option}
-                    onChange={(e) => handleOptionChange(index, e.target.value)}
-                    placeholder={`選項 ${String.fromCharCode(65 + index)}`}
-                  />
-                  <IconButton
-                    onClick={() => removeOption(index)}
-                    disabled={questionForm.options.length <= 2}
-                    color="error"
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Box>
-              ))}
+              {questionForm.options.map((option, index) => {
+                const optionObj = typeof option === 'string' 
+                  ? { text: option, imageUrl: '', audioUrl: '', videoUrl: '' } 
+                  : option;
+                
+                return (
+                  <Card key={index} sx={{ mb: 2, p: 2, backgroundColor: '#2a2f34' }} variant="outlined">
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="subtitle2" color="primary">
+                        選項 {String.fromCharCode(65 + index)}
+                      </Typography>
+                      <IconButton
+                        onClick={() => removeOption(index)}
+                        disabled={questionForm.options.length <= 2}
+                        color="error"
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Box>
+                    
+                    <Stack spacing={1.5}>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        label="選項文本"
+                        value={optionObj.text}
+                        onChange={(e) => handleOptionChange(index, 'text', e.target.value)}
+                        placeholder={`選項 ${String.fromCharCode(65 + index)}`}
+                      />
+                      
+                      <TextField
+                        fullWidth
+                        size="small"
+                        label="圖片網址（可選）"
+                        value={optionObj.imageUrl || ''}
+                        onChange={(e) => handleOptionChange(index, 'imageUrl', e.target.value)}
+                        placeholder="https://example.com/image.jpg 或 Google Drive 分享鏈接"
+                      />
+                      {optionObj.imageUrl && (
+                        <Box sx={{ p: 1, bgcolor: 'white', borderRadius: 1 }}>
+                          {isGoogleDriveUrl(optionObj.imageUrl) ? (
+                            <Box
+                              component="iframe"
+                              src={convertGoogleDriveUrl(optionObj.imageUrl)}
+                              sx={{
+                                width: '100%',
+                                height: 150,
+                                borderRadius: 1,
+                                border: 'none'
+                              }}
+                            />
+                          ) : (
+                            <img 
+                              src={optionObj.imageUrl} 
+                              alt={`選項 ${String.fromCharCode(65 + index)}`}
+                              style={{ maxWidth: '100%', maxHeight: '150px', borderRadius: '4px' }}
+                            />
+                          )}
+                        </Box>
+                      )}
+                      
+                      <TextField
+                        fullWidth
+                        size="small"
+                        label="音頻網址（可選）"
+                        value={optionObj.audioUrl || ''}
+                        onChange={(e) => handleOptionChange(index, 'audioUrl', e.target.value)}
+                        placeholder="https://example.com/audio.mp3 或 Google Drive 分享鏈接"
+                      />
+                      {optionObj.audioUrl && (
+                        <Box sx={{ p: 1, bgcolor: 'white', borderRadius: 1 }}>
+                          {isGoogleDriveUrl(optionObj.audioUrl) ? (
+                            <Box
+                              component="iframe"
+                              src={convertGoogleDriveUrl(optionObj.audioUrl)}
+                              sx={{
+                                width: '100%',
+                                height: 80,
+                                borderRadius: 1,
+                                border: 'none'
+                              }}
+                            />
+                          ) : (
+                            <audio controls style={{ width: '100%' }}>
+                              <source src={optionObj.audioUrl} />
+                              您的瀏覽器不支援音頻播放
+                            </audio>
+                          )}
+                        </Box>
+                      )}
+                      
+                      <TextField
+                        fullWidth
+                        size="small"
+                        label="影片網址（可選）"
+                        value={optionObj.videoUrl || ''}
+                        onChange={(e) => handleOptionChange(index, 'videoUrl', e.target.value)}
+                        placeholder="https://example.com/video.mp4 或 YouTube/Google Drive 鏈接"
+                      />
+                      {optionObj.videoUrl && (
+                        <Box sx={{ p: 1, bgcolor: 'white', borderRadius: 1 }}>
+                          {isGoogleDriveUrl(optionObj.videoUrl) ? (
+                            <Box
+                              component="iframe"
+                              src={convertGoogleDriveUrl(optionObj.videoUrl)}
+                              sx={{
+                                width: '100%',
+                                height: 150,
+                                borderRadius: 1,
+                                border: 'none'
+                              }}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          ) : optionObj.videoUrl.includes('youtube.com') || optionObj.videoUrl.includes('youtu.be') ? (
+                            <Box
+                              component="iframe"
+                              src={optionObj.videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                              sx={{
+                                width: '100%',
+                                height: 150,
+                                borderRadius: 1,
+                                border: 'none'
+                              }}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                            />
+                          ) : (
+                            <video 
+                              controls 
+                              style={{ width: '100%', maxHeight: '150px', borderRadius: '4px' }}
+                              src={optionObj.videoUrl}
+                            >
+                              您的瀏覽器不支援影片播放
+                            </video>
+                          )}
+                        </Box>
+                      )}
+                    </Stack>
+                  </Card>
+                );
+              })}
             </Box>
 
             <TextField
@@ -932,29 +1116,81 @@ function CustomQuestionDialog({
                               <Typography variant="subtitle2" color="primary" gutterBottom>
                                 {question.points} 分
                               </Typography>
-                              <Typography variant="body2">
+                              <Typography variant="body2" sx={{ color: 'text.primary', mb: 1 }}>
                                 {question.question}
                               </Typography>
+                              
+                              {/* 显示选项 */}
+                              {question.options && question.options.length > 0 && (
+                                <Box sx={{ mt: 2, mb: 1 }}>
+                                  <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold', display: 'block', mb: 0.5 }}>
+                                    選項：
+                                  </Typography>
+                                  <Stack spacing={0.5}>
+                                    {question.options.map((option, optIndex) => {
+                                      const optionObj = typeof option === 'string' 
+                                        ? { text: option, imageUrl: '', audioUrl: '', videoUrl: '' } 
+                                        : option;
+                                      
+                                      return (
+                                        <Box key={optIndex} sx={{ pl: 1 }}>
+                                          <Typography variant="body2" sx={{ color: 'text.primary', fontSize: '0.875rem' }}>
+                                            {optionObj.text}
+                                          </Typography>
+                                          {(optionObj.imageUrl || optionObj.audioUrl || optionObj.videoUrl) && (
+                                            <Box sx={{ display: 'flex', gap: 0.5, mt: 0.3, ml: 1 }}>
+                                              {optionObj.imageUrl && (
+                                                <Chip label="🖼️" size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+                                              )}
+                                              {optionObj.audioUrl && (
+                                                <Chip label="🎵" size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+                                              )}
+                                              {optionObj.videoUrl && (
+                                                <Chip label="🎬" size="small" sx={{ height: 20, fontSize: '0.7rem' }} />
+                                              )}
+                                            </Box>
+                                          )}
+                                        </Box>
+                                      );
+                                    })}
+                                  </Stack>
+                                </Box>
+                              )}
+                              
+                              {/* 显示正确答案 */}
+                              {question.correctAnswer && (
+                                <Typography variant="body2" sx={{ color: 'success.main', mt: 1, fontWeight: 'bold' }}>
+                                  正確答案：{question.correctAnswer}
+                                </Typography>
+                              )}
+                              
                               <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
                                 {question.imageUrl && (
                                   <Chip 
-                                    label="含圖片" 
+                                    label="題目含圖片" 
                                     size="small"
                                     color="info"
                                   />
                                 )}
                                 {question.audioUrl && (
                                   <Chip 
-                                    label="含音頻" 
+                                    label="題目含音頻" 
                                     size="small"
                                     color="success"
                                   />
                                 )}
                                 {question.videoUrl && (
                                   <Chip 
-                                    label="含影片" 
+                                    label="題目含影片" 
                                     size="small"
                                     color="warning"
+                                  />
+                                )}
+                                {question.timeLimit > 0 && (
+                                  <Chip 
+                                    label={`⏱️ ${question.timeLimit}秒`}
+                                    size="small"
+                                    variant="outlined"
                                   />
                                 )}
                               </Box>
